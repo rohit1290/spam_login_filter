@@ -59,7 +59,7 @@ if (elgg_get_plugin_setting('use_stopforumspam', 'spam_login_filter') == "yes") 
 	if (!empty($ip_address) && !empty($api_key)) {
 		//Report the spammer
 		$url = 'http://www.stopforumspam.com/add.php?username='.$username.'&ip_addr='.$ip_address.'&email='.$email.'&api_key='.$api_key;
-		$return = spam_login_filter_file_get_conditional_contents($url);
+		$return = call_url($url);
 
 		if ($return == false) {
 			register_error(elgg_echo('spam_login_filter:unable_report'));

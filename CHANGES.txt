@@ -1,5 +1,7 @@
 Validate login against blacklist databases.
 
+
+
 09/20/2014
 - Made sure it works on Elgg 1.9 (fixed one deprecation issue),
 - Made cronjob for cleaning IP addresses cache to work correctly,
