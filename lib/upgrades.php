@@ -4,9 +4,9 @@ namespace Spam\LoginFilter;
 use ElggBatch;
 
 
-function upgrade_20141130d() {
+function upgrade_20141130() {
 	$upgrade_version = get_upgrade_version();
-	
+
 	if ($upgrade_version >= UPGRADE_VERSION) {
 		return true;
 	}
@@ -28,8 +28,9 @@ function upgrade_20141130d() {
 		if ($e->time_created > $week_ago) {
 			$site->annotate('spam_login_filter_ip', $e->ip_address, ACCESS_PUBLIC);
 		}
+		var_dump($e); exit;
 		$e->delete();
 	}
-	
+
 	set_upgrade_version(20141130);
 }
