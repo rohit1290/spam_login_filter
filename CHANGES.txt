@@ -1,5 +1,9 @@
 Validate login against blacklist databases.
 
+- General code cleanup/refactoring
+- Removal of 'tracker' plugin dependency
+- performance: track blacklisted ips as annotations instead of entities
+- performance: daily cron uses ElggBatch to prevent OOM errors
 
 
 09/20/2014

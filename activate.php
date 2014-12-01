@@ -1,7 +1,9 @@
 <?php
 
-$pages = elgg_get_plugin_setting('protected_pages', 'spam_login_filter');
+namespace Spam\LoginFilter;
+
+$pages = elgg_get_plugin_setting('protected_pages', PLUGIN_ID);
 
 if (!$pages) {
-	elgg_set_plugin_setting('protected_pages', 'register', 'spam_login_filter');
+	elgg_set_plugin_setting('protected_pages', 'register', PLUGIN_ID);
 }

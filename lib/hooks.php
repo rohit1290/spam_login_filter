@@ -1,6 +1,7 @@
 <?php
 
 namespace Spam\LoginFilter;
+use ElggMenuItem;
 
 
 /**
@@ -94,7 +95,7 @@ function daily_cron($hook, $entity_type, $returnvalue, $params) {
 function filter_router($hook, $type, $return, $params) {
 
 	// get uris to protect
-	$protect_setting = elgg_get_plugin_setting('protected_pages', 'spam_login_filter');
+	$protect_setting = elgg_get_plugin_setting('protected_pages', PLUGIN_ID);
 	if (empty($protect_setting)) {
 		return $return;
 	}
@@ -150,7 +151,7 @@ function filter_router($hook, $type, $return, $params) {
 	if ($deny) {
 		header("HTTP/1.1 403 Forbidden");
 
-		if (elgg_get_plugin_setting("custom_error_page", "spam_login_filter") == "yes") {
+		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
 			include(dirname(__FILE__) . "/pages/403.php");
 		}
 

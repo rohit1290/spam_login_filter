@@ -12,9 +12,10 @@ namespace Spam\LoginFilter;
  * @return boolean
  */
 function login_event($event, $type, $user) {
-	$check_login = elgg_get_plugin_setting('event_login', 'spam_login_filter');
+	$check_login = elgg_get_plugin_setting('event_login', PLUGIN_ID);
 
 	$ip = get_ip();
+	$user->ip_address = $ip;
 	if ($check_login != 'no') { // do it by default
 		if (!check_spammer($user->email, $ip, true)) {
 			register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
@@ -36,4 +37,24 @@ function login_event($event, $type, $user) {
 			}
 		}
 	}
+}
+
+
+function create_user_event($e, $t, $user) {
+	// check for logged in status, we don't want to record an admin ip address
+	// on an account they just created for example
+	if (!elgg_is_logged_in()) {
+		$user->ip_address = get_ip();
+	}
+}
+
+
+function upgrades() {
+	if (!elgg_is_admin_logged_in()) {
+		return true;
+	}
+	
+	elgg_load_library(__NAMESPACE__ . '\\upgrades');
+	
+	run_function_once(__NAMESPACE__ . '\\upgrade_20141130c');
 }

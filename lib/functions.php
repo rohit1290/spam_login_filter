@@ -26,8 +26,8 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 	}
 
 	//Mail domain blacklist
-	if (elgg_get_plugin_setting('use_mail_domain_blacklist', 'spam_login_filter') == "yes" && !$email_whitelisted) {
-		$blacklistedMailDomains = preg_split('/\\s+/', strip_spaces(strip_tags(elgg_get_plugin_setting('blacklisted_mail_domains', 'spam_login_filter'))), -1, PREG_SPLIT_NO_EMPTY);
+	if (elgg_get_plugin_setting('use_mail_domain_blacklist', PLUGIN_ID) == "yes" && !$email_whitelisted) {
+		$blacklistedMailDomains = preg_split('/\\s+/', strip_spaces(strip_tags(elgg_get_plugin_setting('blacklisted_mail_domains', PLUGIN_ID))), -1, PREG_SPLIT_NO_EMPTY);
 		$mailDomain = explode("@", $register_email);
 
 		foreach ($blacklistedMailDomains as $domain) {
@@ -42,8 +42,8 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 	if (!$spammer) {
 		//Mail blacklist
-		if (elgg_get_plugin_setting('use_mail_blacklist', 'spam_login_filter') == "yes" && !$email_whitelisted) {
-			$blacklistedMails = preg_split('/\\s+/', strip_spaces(strip_tags(elgg_get_plugin_setting('blacklisted_mails', 'spam_login_filter'))), -1, PREG_SPLIT_NO_EMPTY);
+		if (elgg_get_plugin_setting('use_mail_blacklist', PLUGIN_ID) == "yes" && !$email_whitelisted) {
+			$blacklistedMails = preg_split('/\\s+/', strip_spaces(strip_tags(elgg_get_plugin_setting('blacklisted_mails', PLUGIN_ID))), -1, PREG_SPLIT_NO_EMPTY);
 
 			foreach ($blacklistedMails as $blacklistedMail) {
 				if ($blacklistedMail == $register_email) {
@@ -58,7 +58,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 	if (!$spammer) {
 		//StopForumSpam
-		if (elgg_get_plugin_setting('use_stopforumspam', 'spam_login_filter') == "yes") {
+		if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 
 			//check the e-mail adress
 			$url = "http://www.stopforumspam.com/api?email=" . $register_email . "&f=serial";
@@ -96,15 +96,15 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 	if (!$spammer) {
 		//Fassim
-		if (elgg_get_plugin_setting('use_fassim', 'spam_login_filter') == "yes") {
-			$fassim_api_key = elgg_get_plugin_setting('fassim_api_key', 'spam_login_filter');
-			$fassim_check_email = elgg_get_plugin_setting('fassim_check_email', 'spam_login_filter');
-			$fassim_check_ip = elgg_get_plugin_setting('fassim_check_ip', 'spam_login_filter');
-			$fassim_block_proxies = elgg_get_plugin_setting('fassim_block_proxies', 'spam_login_filter');
-			$fassim_block_top_spamming_isps = elgg_get_plugin_setting('fassim_block_top_spamming_isps', 'spam_login_filter');
-			$fassim_block_top_spamming_domains = elgg_get_plugin_setting('fassim_block_top_spamming_domains', 'spam_login_filter');
-			$fassim_blocked_country_list = elgg_get_plugin_setting('fassim_blocked_country_list', 'spam_login_filter');
-			$fassim_blocked_region_list = elgg_get_plugin_setting('fassim_blocked_region_list', 'spam_login_filter');
+		if (elgg_get_plugin_setting('use_fassim', PLUGIN_ID) == "yes") {
+			$fassim_api_key = get_fassim_api_key();
+			$fassim_check_email = elgg_get_plugin_setting('fassim_check_email', PLUGIN_ID);
+			$fassim_check_ip = elgg_get_plugin_setting('fassim_check_ip', PLUGIN_ID);
+			$fassim_block_proxies = elgg_get_plugin_setting('fassim_block_proxies', PLUGIN_ID);
+			$fassim_block_top_spamming_isps = elgg_get_plugin_setting('fassim_block_top_spamming_isps', PLUGIN_ID);
+			$fassim_block_top_spamming_domains = elgg_get_plugin_setting('fassim_block_top_spamming_domains', PLUGIN_ID);
+			$fassim_blocked_country_list = elgg_get_plugin_setting('fassim_blocked_country_list', PLUGIN_ID);
+			$fassim_blocked_region_list = elgg_get_plugin_setting('fassim_blocked_region_list', PLUGIN_ID);
 
 			if (!empty($fassim_api_key) && preg_match('/^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}$/i', $fassim_api_key)) {
 
@@ -193,7 +193,7 @@ function call_url($url) {
  * @return array
  */
 function get_banned_strings() {
-	$string = elgg_get_plugin_setting('banned_metadata', 'spam_login_filter');
+	$string = elgg_get_plugin_setting('banned_metadata', PLUGIN_ID);
 	if (!$string) {
 		return array();
 	}
@@ -226,9 +226,32 @@ function get_ip() {
 	return $realip;
 }
 
+function get_sfs_api_key() {
+	static $sfs_api_key;
+	if ($sfs_api_key) {
+		return $sfs_api_key;
+	}
+	
+	$sfs_api_key = elgg_get_plugin_setting('stopforumspam_api_key', PLUGIN_ID);
+	
+	return $sfs_api_key;
+}
+
+
+function get_fassim_api_key() {
+	static $fassim_api_key;
+	if ($fassim_api_key) {
+		return $fassim_api_key;
+	}
+	
+	$fassim_api_key = elgg_get_plugin_setting('fassim_api_key', PLUGIN_ID);
+	
+	return $fassim_api_key;
+}
+
 
 function get_metadata_names() {
-	$string = elgg_get_plugin_setting('user_metadata', 'spam_login_filter');
+	$string = elgg_get_plugin_setting('user_metadata', PLUGIN_ID);
 	if (!$string) {
 		return array();
 	}
@@ -237,6 +260,15 @@ function get_metadata_names() {
 	$array = array_map('trim', $array);
 
 	return $array;
+}
+
+
+function get_upgrade_version() {
+	return elgg_get_plugin_setting('upgrade_version', PLUGIN_ID);
+}
+
+function set_upgrade_version($version) {
+	return elgg_set_plugin_setting('upgrade_version', $version, PLUGIN_ID);
 }
 
 
@@ -252,7 +284,7 @@ function is_ip_whitelisted($ip = false) {
 	}
 
 	// check for whitelist first
-	$whitelist = elgg_get_plugin_setting('whitelist_ip', 'spam_login_filter');
+	$whitelist = elgg_get_plugin_setting('whitelist_ip', PLUGIN_ID);
 	$whitelist = explode("\n", $whitelist);
 	$whitelist = array_map('trim', $whitelist);
 
@@ -283,7 +315,7 @@ function is_ip_whitelisted($ip = false) {
  */
 function is_email_whitelisted($email) {
 	// check for domain whitelist first
-	$whitelist = elgg_get_plugin_setting('whitelist_email_domain', 'spam_login_filter');
+	$whitelist = elgg_get_plugin_setting('whitelist_email_domain', PLUGIN_ID);
 	$whitelist = explode("\n", $whitelist);
 	$whitelist = array_map('trim', $whitelist);
 
@@ -294,7 +326,7 @@ function is_email_whitelisted($email) {
 	}
 
 	// check for specific email whitelist
-	$whitelist = elgg_get_plugin_setting('whitelist_email', 'spam_login_filter');
+	$whitelist = elgg_get_plugin_setting('whitelist_email', PLUGIN_ID);
 	$whitelist = explode("\n", $whitelist);
 	$whitelist = array_map('trim', $whitelist);
 
@@ -315,7 +347,7 @@ function is_email_whitelisted($email) {
  * @return type
  */
 function notify_admin($blockedEmail, $blockedIp, $reason) {
-	if (elgg_get_plugin_setting('notify_by_mail', 'spam_login_filter') == "yes") {
+	if (elgg_get_plugin_setting('notify_by_mail', PLUGIN_ID) == "yes") {
 		//Notify spam tentative to administrator
 
 		$site = elgg_get_site_entity();
@@ -327,7 +359,7 @@ function notify_admin($blockedEmail, $blockedIp, $reason) {
 
 		$message = elgg_echo('spam_login_filter:notify_message', array($blockedEmail, $blockedIp, $reason));
 
-		$to = elgg_get_plugin_setting('notify_mail_address', 'spam_login_filter');
+		$to = elgg_get_plugin_setting('notify_mail_address', PLUGIN_ID);
 		if (!is_email_address($to)) {
 			return;
 		}

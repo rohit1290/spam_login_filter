@@ -16,18 +16,7 @@ $delete = elgg_view("output/confirmlink", array(
 	"title" => elgg_echo("delete")
 ));
 
-if (elgg_is_active_plugin("tracker")) {
-	if ($setting = elgg_get_plugin_setting("tracker_url", "tracker")) {
-		$tracker_url = sprintf($setting, $spam_login_filter_ip->ip_address);
-		// Create tracker link
-		$ip_with_tracker_link = elgg_view("output/url", array(
-			"href" => $tracker_url,
-			"title" => elgg_echo("tracker:moreinfo"),
-			"text" => $spam_login_filter_ip->ip_address,
-			"target" => "_blank"
-		));
-	}
-} else if ($setting = elgg_get_plugin_setting("tracker_url", "spam_login_filter")) {
+if ($setting = elgg_get_plugin_setting("tracker_url", PLUGIN_ID)) {
 	$tracker_url = sprintf($setting, $spam_login_filter_ip->ip_address);
 	// Create tracker link
 	$ip_with_tracker_link = elgg_view("output/url", array(

@@ -1,5 +1,9 @@
 <?php
 
+namespace Spam\LoginFilter;
+use ElggObject;
+use ElggUser;
+
 $forward = REFERER;
 $deleted = false;
 
@@ -11,13 +15,13 @@ $name = $obj->name;
 $username = $obj->username;
 $email = $obj->email;
 $ip_address = $obj->ip_address;
-$api_key = elgg_get_plugin_setting('stopforumspam_api_key', 'spam_login_filter');
+$api_key = get_sfs_api_key();
 
 if (empty($ip_address)) {
 	register_error(elgg_echo('spam_login_filter:empty_ip_error'));
 	forward($forward);
 } else {
-	if (elgg_get_plugin_setting('use_ip_blacklist_cache', 'spam_login_filter') == "yes") {
+	if (elgg_get_plugin_setting('use_ip_blacklist_cache', PLUGIN_ID) == "yes") {
 		// Blacklist the IP
 		//Check if the ip exists
 		$options = array(
@@ -50,7 +54,7 @@ if (empty($ip_address)) {
 }
 
 //Report to stopforumspam.com
-if (elgg_get_plugin_setting('use_stopforumspam', 'spam_login_filter') == "yes") {
+if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 	if (empty($api_key)){
 		register_error(elgg_echo('spam_login_filter:empty_api_key_error'));
 		forward($forward);
