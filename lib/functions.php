@@ -264,6 +264,7 @@ function get_metadata_names() {
 
 
 function get_upgrade_version() {
+	return 20141129;
 	return elgg_get_plugin_setting('upgrade_version', PLUGIN_ID);
 }
 

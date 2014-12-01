@@ -8,19 +8,14 @@ if (!$spam_login_filter_ip_list) {
 	forward('admin/administer_utilities/manageip');
 }
 
-$access = access_get_show_hidden_status();
-access_show_hidden_entities(true);
-
-foreach ($spam_login_filter_ip_list as $guid) {
-	$ip = get_entity($guid);
+foreach ($spam_login_filter_ip_list as $id) {
+	$ip = elgg_get_annotation_from_id($id);
 
 	if (!$ip->delete()) {
 		$error = true;
 		continue;
 	}
 }
-
-access_show_hidden_entities($access);
 
 if (count($spam_login_filter_ip_list) == 1) {
 	$message_txt = elgg_echo('spam_login_filter:messages:deleted_ip');

@@ -11,6 +11,10 @@ $deleted = false;
 $guid = get_input('guid');
 $obj = get_entity($guid);
 
+if (!elgg_instanceof($obj, 'user')) {
+	forward($forward);
+}
+
 $name = $obj->name;
 $username = $obj->username;
 $email = $obj->email;
@@ -25,31 +29,17 @@ if (empty($ip_address)) {
 		// Blacklist the IP
 		//Check if the ip exists
 		$options = array(
-			"type" => "object",
-			"subtype" => "spam_login_filter_ip",
-			"metadata_name_value_pairs" => array(
-				"name" => "ip_address",
-				"value" => $ip_address,
-			),
-			"count" => true
+			'guid' => elgg_get_site_entity()->guid,
+			'annotation_name' => 'spam_login_filter_ip',
+			'annotation_value' => $ip_address
 		);
 
-		$ia = elgg_set_ignore_access(true);
-
-		$spam_login_filter_ip_list = elgg_get_entities_from_metadata($options);
+		$spam_login_filter_ip_list = elgg_get_annotations($options);
 
 		if (!$spam_login_filter_ip_list) {
 			//Create the banned ip
-			$ip = new ElggObject();
-			$ip->subtype = 'spam_login_filter_ip';
-			$ip->access_id = ACCESS_PRIVATE;
-			$ip->ip_address = $ip_address;
-			$ip->owner_guid = elgg_get_site_entity()->guid;
-			$ip->container_guid = elgg_get_site_entity()->guid;
-			$ip->save();
+			elgg_get_site_entity()->annotate('spam_login_filter_ip', $ip_address, ACCESS_PUBLIC);
 		}
-
-		elgg_set_ignore_access($ia);
 	}
 }
 

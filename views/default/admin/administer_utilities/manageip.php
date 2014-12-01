@@ -1,26 +1,27 @@
 <?php
 
-$limit = (int) get_input("limit", 25);
-$offset = (int) get_input("offset", 0);
+$limit = (int) max(1, get_input("limit", 25));
+$offset = (int) max(0, get_input("offset", 0));
+
+$site = elgg_get_site_entity();
 
 $options = array(
-	"type" => "object",
-	"subtype" => "spam_login_filter_ip",
-	"limit" => $limit,
-	"offset" => $offset,
-	"count" => true,
+	'guid' => $site->guid,
+	'annotation_names' => array('spam_login_filter_ip'),
+	'offset' => $offset,
+	'limit' => $limit,
+	'count' => true
 );
 
-$spam_login_filter_ip_list = elgg_get_entities($options);
 
-if (!$count = elgg_get_entities($options)) {
+if (!$count = elgg_get_annotations($options)) {
 	echo elgg_echo("spam_login_filter:admin:no_ips");
 	return;
 }
 
 $options["count"]  = false;
 
-$spam_login_filter_ip_list = elgg_get_entities($options);
+$spam_login_filter_ip_list = elgg_get_annotations($options);
 
 // setup pagination
 $pagination = elgg_view("navigation/pagination",array(

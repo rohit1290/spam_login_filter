@@ -65,29 +65,19 @@ function verify_action_hook($hook, $entity_type, $returnvalue, $params) {
  * @param type $params
  */
 function daily_cron($hook, $entity_type, $returnvalue, $params) {
-	//Retrieve the ips older than one week
-	$time_to_seek = time() - 604800; //(7 * 24 * 60 * 60);
-
-	$options = array(
-		"type" => "object",
-		"subtype" => "spam_login_filter_ip",
-		"created_time_upper" => $time_to_seek,
-		"limit" => false
-	);
-
+	
 	$ia = elgg_set_ignore_access(true);
-	$access = access_get_show_hidden_status();
-	access_show_hidden_entities(true);
+	
+	//Retrieve the ips older than one week
+	$week_ago = time() - 604800; //(7 * 24 * 60 * 60);
+	
+	elgg_delete_annotations(array(
+		'guid' => elgg_get_site_entity()->guid,
+		'annotation_names' => 'spam_login_filter_ip',
+		'annotation_created_time_upper' => $week_ago,
+		'limit' => false
+	));
 
-	$spam_login_filter_ip_list = elgg_get_entities($options);
-
-	if ($spam_login_filter_ip_list) {
-		foreach($spam_login_filter_ip_list as $ip_to_exclude) {
-			$ip_to_exclude->delete();
-		}
-	}
-
-	access_show_hidden_entities($access);
 	elgg_set_ignore_access($ia);
 }
 

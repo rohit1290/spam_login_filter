@@ -56,5 +56,5 @@ function upgrades() {
 	
 	elgg_load_library(__NAMESPACE__ . '\\upgrades');
 	
-	run_function_once(__NAMESPACE__ . '\\upgrade_20141130c');
+	run_function_once(__NAMESPACE__ . '\\upgrade_20141130d');
 }

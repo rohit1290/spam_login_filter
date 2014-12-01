@@ -4,7 +4,7 @@ namespace Spam\LoginFilter;
 use ElggBatch;
 
 
-function upgrade_20141130c() {
+function upgrade_20141130d() {
 	$upgrade_version = get_upgrade_version();
 	
 	if ($upgrade_version >= UPGRADE_VERSION) {
@@ -22,11 +22,14 @@ function upgrade_20141130c() {
 
 	$batch = new ElggBatch('elgg_get_entities', $options, null, 50, false);
 	
+	$week_ago = time() - 604800; // just delete anything over a week old
 	foreach ($batch as $e) {
 		// create a new record as an annotation and delete the entity
-		$site->annotate('spam_login_filter_ip', $e->ip_address, ACCESS_PUBLIC);
+		if ($e->time_created > $week_ago) {
+			$site->annotate('spam_login_filter_ip', $e->ip_address, ACCESS_PUBLIC);
+		}
 		$e->delete();
 	}
 	
-	set_upgrade_version(20141129);
+	set_upgrade_version(20141130);
 }
