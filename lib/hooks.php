@@ -162,7 +162,7 @@ function filter_router($hook, $type, $return, $params) {
 function user_hover_menu($hook, $type, $return, $params) {
 	$user = $params['entity'];
 
-	if ($user->guid != elgg_get_logged_in_user_guid()) {
+	if ($user->guid != elgg_get_logged_in_user_guid() && elgg_is_admin_logged_in()) {
 
 		$item = ElggMenuItem::factory(array(
 			'name' => "spam_login_filter_delete",
@@ -175,4 +175,24 @@ function user_hover_menu($hook, $type, $return, $params) {
 	}
 
 	return $return;
+}
+
+
+function register_user($h, $t, $r, $p) {
+	$email = $p['user']->email;
+	$ip = get_ip();
+	if (check_spammer($email, $ip)) {
+		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
+			// explicitly delete the user before fowarding to 403
+			$ia = elgg_set_ignore_access(true);
+			$p['user']->delete();
+			elgg_set_ignore_access($ia);
+			header("HTTP/1.1 403 Forbidden");
+			include(dirname(__DIR__) . "/pages/403.php");
+			exit;
+		}
+		return false;
+	}
+	
+	return $r;
 }

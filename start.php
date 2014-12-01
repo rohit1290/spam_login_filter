@@ -18,6 +18,7 @@ function init() {
 	elgg_register_plugin_hook_handler('cron', 'daily', __NAMESPACE__ . '\\daily_cron');
 	elgg_register_plugin_hook_handler('route', 'all', __NAMESPACE__ . '\\filter_router');
 	elgg_register_plugin_hook_handler('register', 'menu:user_hover', __NAMESPACE__ . '\\user_hover_menu', 1000);
+	elgg_register_plugin_hook_handler('register', 'user', __NAMESPACE__ . '\\register_user');
 
 	// register events
 	// recored ip addresses for users on creation and each time they log in
