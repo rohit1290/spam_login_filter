@@ -9,9 +9,7 @@ if (!$spam_login_filter_ip_list) {
 }
 
 foreach ($spam_login_filter_ip_list as $id) {
-	$ip = elgg_get_annotation_from_id($id);
-
-	if (!$ip->delete()) {
+	if (!elgg_delete_annotation_by_id($id)) {
 		$error = true;
 		continue;
 	}

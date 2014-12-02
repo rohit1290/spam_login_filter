@@ -12,6 +12,7 @@ function upgrade_20141130() {
 	}
 	
 	$site = elgg_get_site_entity();
+	$dbprefix = elgg_get_config('dbprefix');
 	
 	// move ip tracking from heavy object entities to lighter-weight annotations
 	$options = array(
@@ -26,9 +27,14 @@ function upgrade_20141130() {
 	foreach ($batch as $e) {
 		// create a new record as an annotation and delete the entity
 		if ($e->time_created > $week_ago) {
-			$site->annotate('spam_login_filter_ip', $e->ip_address, ACCESS_PUBLIC);
+			$id = $site->annotate('spam_login_filter_ip', $e->ip_address, ACCESS_PUBLIC);
+			
+			if ($id) {
+				$sql = "UPDATE {$dbprefix}annotations SET time_created = {$e->time_created} WHERE id = {$id}";
+				update_data($sql);
+			}
 		}
-		var_dump($e); exit;
+		
 		$e->delete();
 	}
 

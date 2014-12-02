@@ -61,13 +61,13 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 		if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 
 			//check the e-mail adress
-			$url = "http://www.stopforumspam.com/api?email=" . $register_email . "&f=serial";
+			$url = "http://www.stopforumspam.com/api?email=" . $register_email . "&f=json";
 
 			$return = call_url($url);
 
 			if ($return != false) {
-				$data = unserialize($return);
-				$email_frequency = $data['email']['frequency'];
+				$data = json_decode($return);
+				$email_frequency = $data->email->frequency;
 				if ($email_frequency != '0' && !$email_whitelisted) {
 					register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
 					notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
@@ -77,13 +77,13 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 			if (!$spammer && !$ip_whitelisted) {
 				//e-mail not found in the database, now check the ip
-				$url = "http://www.stopforumspam.com/api?ip=" . $register_ip . "&f=serial";
+				$url = "http://www.stopforumspam.com/api?ip=" . $register_ip . "&f=json";
 
 				$return = call_url($url);
 
 				if ($return != false) {
-					$data = unserialize($return);
-					$ip_frequency = $data['ip']['frequency'];
+					$data = json_decode($return);
+					$ip_frequency = $data->ip->frequency;
 					if ($ip_frequency != '0') {
 						register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
 						notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
@@ -264,7 +264,6 @@ function get_metadata_names() {
 
 
 function get_upgrade_version() {
-	return 20141129;
 	return elgg_get_plugin_setting('upgrade_version', PLUGIN_ID);
 }
 

@@ -1,7 +1,6 @@
 <?php
 
 namespace Spam\LoginFilter;
-use ElggObject;
 use ElggUser;
 
 $forward = REFERER;

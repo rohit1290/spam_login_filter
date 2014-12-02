@@ -5,7 +5,8 @@ Validate login against blacklist databases.
 - Removal of 'tracker' plugin dependency
 - performance: track blacklisted ips as annotations instead of entities
 - performance: daily cron uses ElggBatch to prevent OOM errors
-- check for spam on user register hook - catches email checks unavailable on register page
+- check for spam on user register hook (catches email checks unavailable on register page, or custom actions)
+- security: request json results from stopforumspam endpoint instead of serialized PHP
 
 
 09/20/2014
