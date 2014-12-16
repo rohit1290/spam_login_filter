@@ -1,5 +1,9 @@
 Validate login against blacklist databases.
 
+2.0.1 - (12/16/2014):
+ - more readable output for check_spammer function
+ - correct return value for register hook
+
 12/01/2014
 - General code cleanup/refactoring
 - Removal of 'tracker' plugin dependency
