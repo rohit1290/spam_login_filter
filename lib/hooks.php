@@ -163,7 +163,7 @@ function user_hover_menu($hook, $type, $return, $params) {
 function register_user($h, $t, $r, $p) {
 	$email = $p['user']->email;
 	$ip = get_ip();
-	if (check_spammer($email, $ip)) {
+	if (!check_spammer($email, $ip)) {
 		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
 			// explicitly delete the user before fowarding to 403
 			$ia = elgg_set_ignore_access(true);
