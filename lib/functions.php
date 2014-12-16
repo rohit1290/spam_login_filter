@@ -167,7 +167,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 		}
 	}
 
-	return !$spammer;
+	return $spammer ? false : true;
 }
 
 function call_url($url) {
