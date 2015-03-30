@@ -22,7 +22,7 @@ function init() {
 
 	// register events
 	// recored ip addresses for users on creation and each time they log in
-	elgg_register_event_handler('login', 'user', __NAMESPACE__ . '\\login_event');
+	elgg_register_event_handler('login:before', 'user', __NAMESPACE__ . '\\login_event');
 	elgg_register_event_handler('create', 'user', __NAMESPACE__ . '\\create_user_event');
 	elgg_register_event_handler('upgrade', 'system', __NAMESPACE__ . '\\upgrades');
 

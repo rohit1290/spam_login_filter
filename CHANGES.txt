@@ -1,5 +1,9 @@
 Validate login against blacklist databases.
 
+2.0.2 - (03/29/2015):
+ - update deprecated login event
+ - add readme
+
 2.0.1 - (12/16/2014):
  - more readable output for check_spammer function
  - correct return value for register hook
