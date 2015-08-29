@@ -13,14 +13,14 @@ use ElggMenuItem;
  * @param type $params
  * @return boolean
  */
-function verify_action_hook($hook, $entity_type, $returnvalue, $params) {
+function verify_action_hook($hook, $type, $return, $params) {
 	//Check against stopforumspam and domain blacklist
 
 	$email = get_input('email');
 	$ip = get_ip();
 
 	if (check_spammer($email, $ip)) {
-		return true;
+		return $return;
 	} else {
 		//Check if the ip exists
 		$blacklisted = elgg_get_annotations(array(
@@ -124,7 +124,7 @@ function filter_router($hook, $type, $return, $params) {
 		header("HTTP/1.1 403 Forbidden");
 
 		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
-			include(dirname(__FILE__) . "/pages/403.php");
+			include(dirname(__DIR__) . "/pages/403.php");
 		}
 
 		return false;

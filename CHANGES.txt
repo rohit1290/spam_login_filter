@@ -1,5 +1,9 @@
 Validate login against blacklist databases.
 
+2.0.3 - (08/29/2015):
+ - Fix 403 page rendering
+ - Check for spammers on first login regardless of event plugin setting
+
 2.0.2 - (03/29/2015):
  - update deprecated login event
  - add readme

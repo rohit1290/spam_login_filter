@@ -3,7 +3,6 @@
 namespace Spam\LoginFilter;
 use ElggUser;
 
-$forward = REFERER;
 $deleted = false;
 
 // Get the user
@@ -11,7 +10,7 @@ $guid = get_input('guid');
 $obj = get_entity($guid);
 
 if (!elgg_instanceof($obj, 'user')) {
-	forward($forward);
+	forward(REFERER);
 }
 
 $name = $obj->name;
@@ -22,7 +21,7 @@ $api_key = get_sfs_api_key();
 
 if (empty($ip_address)) {
 	register_error(elgg_echo('spam_login_filter:empty_ip_error'));
-	forward($forward);
+	forward(REFERER);
 } else {
 	if (elgg_get_plugin_setting('use_ip_blacklist_cache', PLUGIN_ID) == "yes") {
 		// Blacklist the IP
@@ -46,7 +45,7 @@ if (empty($ip_address)) {
 if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 	if (empty($api_key)){
 		register_error(elgg_echo('spam_login_filter:empty_api_key_error'));
-		forward($forward);
+		forward(REFERER);
 	}
 
 	if (!empty($ip_address) && !empty($api_key)) {
@@ -56,7 +55,7 @@ if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 
 		if ($return == false) {
 			register_error(elgg_echo('spam_login_filter:unable_report'));
-			forward($forward);
+			forward(REFERER);
 		}
 	}
 }
@@ -73,6 +72,7 @@ if (($obj instanceof ElggUser) && ($obj->canEdit())) {
 }
 
 // forward to user administration if on a user's page as it no longer exists
+$forward = REFERER;
 if ($deleted) {
 	$forward = "admin/";
 }

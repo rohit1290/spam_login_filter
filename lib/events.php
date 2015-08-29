@@ -16,7 +16,7 @@ function login_event($event, $type, $user) {
 
 	$ip = get_ip();
 	$user->ip_address = $ip;
-	if ($check_login != 'no') { // do it by default
+	if ($check_login != 'no' || !$user->last_login) { // do it by default
 		if (!check_spammer($user->email, $ip, true)) {
 			register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
 			notify_admin($user->email, $ip, "Existing member identified as spammer has tried to login, check this account");
