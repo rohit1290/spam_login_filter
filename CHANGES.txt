@@ -1,5 +1,8 @@
 Validate login against blacklist databases.
 
+2.1.0 - (09/04/2015):
+ - remove fassim related code :(
+
 2.0.3 - (08/29/2015):
  - Fix 403 page rendering
  - Check for spammers on first login regardless of event plugin setting

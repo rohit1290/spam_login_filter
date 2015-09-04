@@ -31,19 +31,6 @@ return array(
 	'spam_login_filter:user_deleted' => "User deleted.",
 	'spam_login_filter:user_not_deleted' => "Unable to delete user.",
 
-	//Configuration form - Fassim settings
-	'spam_login_filter:use_fassim' => "Use Fassim.com?",
-	'spam_login_filter:fassim_api_key' => "Fassim API key:",
-	'spam_login_filter:fassim_check_email' => "Check email?",
-	'spam_login_filter:fassim_check_ip' => "Check IP?",
-	'spam_login_filter:fassim_block_proxies' => "Block anonymous proxies?",
-	'spam_login_filter:fassim_block_top_spamming_isps' => "Block top spamming ISP's?",
-	'spam_login_filter:fassim_block_top_spamming_domains' => "Block top spamming domains?",
-	'spam_login_filter:fassim_blocked_country_list' => "Block the following countries:",
-	'spam_login_filter:fassim_blocked_country_list:help' => "(Just type in the country abbreviation of the countries you want to block, for multiple countries separated by comma, e.g. US,LV,HK. For a full list of supported country abbreviations click <a href='http://www.fassim.com/country-codes/' target='_blank'>Country Codes</a>)",
-	'spam_login_filter:fassim_blocked_region_list' => "Block the following regions (currently supported are only regions in Canada and the US):",
-	'spam_login_filter:fassim_blocked_region_list:help' => "(Just type in the region abbreviation of the region you want to block, for multiple regions separate by comma, e.g. US-GA,CA-NS. For a full list of supported region abbreviations click <a href='http://www.fassim.com/region-codes/' target='_blank'>Region Codes</a>)",
-
 	//Configuration form - Stopforumspam settings
 	'spam_login_filter:use_stopforumspam' => "Use Stopforumspam.com?",
 	'spam_login_filter:stopforumspam_api_key' => "Stopforumspam API key (optional):",

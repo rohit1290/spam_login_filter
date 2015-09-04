@@ -94,79 +94,6 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 		}
 	}
 
-	if (!$spammer) {
-		//Fassim
-		if (elgg_get_plugin_setting('use_fassim', PLUGIN_ID) == "yes") {
-			$fassim_api_key = get_fassim_api_key();
-			$fassim_check_email = elgg_get_plugin_setting('fassim_check_email', PLUGIN_ID);
-			$fassim_check_ip = elgg_get_plugin_setting('fassim_check_ip', PLUGIN_ID);
-			$fassim_block_proxies = elgg_get_plugin_setting('fassim_block_proxies', PLUGIN_ID);
-			$fassim_block_top_spamming_isps = elgg_get_plugin_setting('fassim_block_top_spamming_isps', PLUGIN_ID);
-			$fassim_block_top_spamming_domains = elgg_get_plugin_setting('fassim_block_top_spamming_domains', PLUGIN_ID);
-			$fassim_blocked_country_list = elgg_get_plugin_setting('fassim_blocked_country_list', PLUGIN_ID);
-			$fassim_blocked_region_list = elgg_get_plugin_setting('fassim_blocked_region_list', PLUGIN_ID);
-
-			if (!empty($fassim_api_key) && preg_match('/^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}$/i', $fassim_api_key)) {
-
-				$url = 'http://api.fassim.com/regcheck.php?apikey=' . $fassim_api_key . '&email=' . $register_email . "&ip=" . $register_ip . '&proxy=' . $fassim_block_proxies . '&topisp=' . $fassim_block_top_spamming_isps . '&topdm=' . $fassim_block_top_spamming_domains . '&cc=' . $fassim_blocked_country_list . '&region=' . $fassim_blocked_region_list . '&hostForumVersion=ELGG';
-
-				$return = call_url($url);
-
-				if ($return != false) {
-					$results = json_decode($return);
-
-					if ($results != null) {
-						if ($fassim_check_email == 1 && isset($results->email_status) && $results->email_status == true) {
-							if (!$email_whitelisted) {
-								register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
-								notify_admin($register_email, $register_ip, "Fassim e-mail blacklist");
-								$spammer = true;
-							}
-						}
-
-						if ($fassim_check_ip == 1 && isset($results->ip_status) && $results->ip_status == true) {
-							if (!$ip_whitelisted) {
-								register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
-								notify_admin($register_email, $register_ip, "Fassim IP blacklist");
-								$spammer = true;
-							}
-						}
-
-						if ($fassim_block_proxies == 1 && isset($results->proxy) && $results->proxy == true) {
-							register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
-							notify_admin($register_email, $register_ip, "Fassim proxy blacklist");
-							$spammer = true;
-						}
-
-						if ($fassim_block_top_spamming_isps == 1 && isset($results->top_isp) && $results->top_isp == true) {
-							register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
-							notify_admin($register_email, $register_ip, "Fassim top ISP blacklist");
-							$spammer = true;
-						}
-
-						if ($fassim_block_top_spamming_domains == 1 && isset($results->top_domain) && $results->top_domain == true) {
-							register_error(elgg_echo('spam_login_filter:access_denied_domain_blacklist'));
-							notify_admin($register_email, $register_ip, "Fassim top domains blacklist");
-							$spammer = true;
-						}
-
-						if (!empty($fassim_blocked_country_list) && isset($results->country_match) && $results->country_match == true) {
-							register_error(elgg_echo('spam_login_filter:access_denied_country_blacklist'));
-							notify_admin($register_email, $register_ip, "Fassim country blacklist");
-							$spammer = true;
-						}
-
-						if (!empty($fassim_blocked_region_list) && isset($results->region) && $results->region == true) {
-							register_error(elgg_echo('spam_login_filter:access_denied_region_blacklist'));
-							notify_admin($register_email, $register_ip, "Fassim region blacklist");
-							$spammer = true;
-						}
-					}
-				}
-			}
-		}
-	}
-
 	return $spammer ? false : true;
 }
 
@@ -235,18 +162,6 @@ function get_sfs_api_key() {
 	$sfs_api_key = elgg_get_plugin_setting('stopforumspam_api_key', PLUGIN_ID);
 	
 	return $sfs_api_key;
-}
-
-
-function get_fassim_api_key() {
-	static $fassim_api_key;
-	if ($fassim_api_key) {
-		return $fassim_api_key;
-	}
-	
-	$fassim_api_key = elgg_get_plugin_setting('fassim_api_key', PLUGIN_ID);
-	
-	return $fassim_api_key;
 }
 
 
