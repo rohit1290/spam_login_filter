@@ -2,6 +2,7 @@ Validate login against blacklist databases.
 
 2.1.0 - (09/04/2015):
  - remove fassim related code :(
+ - javascript confirmation on "delete and report" user hover menu item
 
 2.0.3 - (08/29/2015):
  - Fix 403 page rendering
