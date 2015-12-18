@@ -21,20 +21,9 @@ function verify_action_hook($hook, $type, $return, $params) {
 
 	if (check_spammer($email, $ip)) {
 		return $return;
-	} else {
-		//Check if the ip exists
-		$blacklisted = elgg_get_annotations(array(
-			'guid' => elgg_get_site_entity()->guid,
-			'annotation_names' => array('spam_login_filter_ip'),
-			'annotation_values' => array($ip)
-		));
-
-		if (!$blacklisted) {
-			elgg_get_site_entity()->annotate('spam_login_filter_ip', $ip, ACCESS_PUBLIC);
-		}
-
-		forward();
 	}
+    
+	forward();
 }
 
 

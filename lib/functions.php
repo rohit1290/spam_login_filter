@@ -11,22 +11,36 @@ namespace Spam\LoginFilter;
  * @return boolean
  */
 function check_spammer($register_email, $register_ip, $checkemail = true) {
-	$spammer = false;
 
 	if ($checkemail) {
 		$email_whitelisted = is_email_whitelisted($register_email);
-	} else {
-		$email_whitelisted = true;
+        if ($email_whitelisted) {
+            return true; // not a spammer, no need for any further checks
+        }
 	}
+    
 	$ip_whitelisted = is_ip_whitelisted($register_ip);
 
-	if ($email_whitelisted && $ip_whitelisted) {
-		// short circuit
+	if ($ip_whitelisted) {
+		// not a spammer, no need for any further checks
 		return true;
 	}
+    
+    // check ip cache
+	$blacklisted = elgg_get_annotations(array(
+		'guid' => elgg_get_site_entity()->guid,
+		'annotation_names' => array('spam_login_filter_ip'),
+		'annotation_values' => array($register_ip)
+	));
+    
+    if ($blacklisted) {
+        register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+		notify_admin($register_email, $register_ip, "Internal IP blacklist");
+		return false;
+    }
 
 	//Mail domain blacklist
-	if (elgg_get_plugin_setting('use_mail_domain_blacklist', PLUGIN_ID) == "yes" && !$email_whitelisted) {
+	if (elgg_get_plugin_setting('use_mail_domain_blacklist', PLUGIN_ID) == "yes") {
 		$blacklistedMailDomains = preg_split('/\\s+/', strip_spaces(strip_tags(elgg_get_plugin_setting('blacklisted_mail_domains', PLUGIN_ID))), -1, PREG_SPLIT_NO_EMPTY);
 		$mailDomain = explode("@", $register_email);
 
@@ -34,67 +48,65 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 			if ($mailDomain[1] == $domain) {
 				register_error(elgg_echo('spam_login_filter:access_denied_domain_blacklist'));
 				notify_admin($register_email, $register_ip, "Internal domain blacklist");
-				$spammer = true;
+				return false;
 				break;
 			}
 		}
 	}
 
-	if (!$spammer) {
-		//Mail blacklist
-		if (elgg_get_plugin_setting('use_mail_blacklist', PLUGIN_ID) == "yes" && !$email_whitelisted) {
-			$blacklistedMails = preg_split('/\\s+/', strip_spaces(strip_tags(elgg_get_plugin_setting('blacklisted_mails', PLUGIN_ID))), -1, PREG_SPLIT_NO_EMPTY);
+	//Mail blacklist
+	if (elgg_get_plugin_setting('use_mail_blacklist', PLUGIN_ID) == "yes") {
+		$blacklistedMails = preg_split('/\\s+/', strip_spaces(strip_tags(elgg_get_plugin_setting('blacklisted_mails', PLUGIN_ID))), -1, PREG_SPLIT_NO_EMPTY);
 
-			foreach ($blacklistedMails as $blacklistedMail) {
-				if ($blacklistedMail == $register_email) {
-					register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
-					notify_admin($register_email, $register_ip, "Internal e-mail blacklist");
-					$spammer = true;
-					break;
-				}
+		foreach ($blacklistedMails as $blacklistedMail) {
+			if ($blacklistedMail == $register_email) {
+				register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
+				notify_admin($register_email, $register_ip, "Internal e-mail blacklist");
+				return false;
+				break;
 			}
 		}
 	}
 
-	if (!$spammer) {
-		//StopForumSpam
-		if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
+	//StopForumSpam
+	if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 
-			//check the e-mail adress
-			$url = "http://www.stopforumspam.com/api?email=" . $register_email . "&f=json";
+		//check the e-mail adress
+		$url = "http://www.stopforumspam.com/api?email=" . $register_email . "&f=json";
 
-			$return = call_url($url);
+		$return = call_url($url);
 
-			if ($return != false) {
-				$data = json_decode($return);
-				$email_frequency = $data->email->frequency;
-				if ($email_frequency != '0' && !$email_whitelisted) {
-					register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
-					notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
-					$spammer = true;
-				}
+		if ($return != false) {
+			$data = json_decode($return);
+			$email_frequency = $data->email->frequency;
+			if ($email_frequency != '0') {
+				register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
+				notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
+				return false;
 			}
+		}
 
-			if (!$spammer && !$ip_whitelisted) {
-				//e-mail not found in the database, now check the ip
-				$url = "http://www.stopforumspam.com/api?ip=" . $register_ip . "&f=json";
+    	//e-mail not found in the database, now check the ip
+		$url = "http://www.stopforumspam.com/api?ip=" . $register_ip . "&f=json";
 
-				$return = call_url($url);
+		$return = call_url($url);
 
-				if ($return != false) {
-					$data = json_decode($return);
-					$ip_frequency = $data->ip->frequency;
-					if ($ip_frequency != '0') {
-						register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
-						notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
-						$spammer = true;
-					}
-				}
+		if ($return != false) {
+			$data = json_decode($return);
+			$ip_frequency = $data->ip->frequency;
+			if ($ip_frequency != '0') {
+				register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+				notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
+                
+                // cache this ip
+                elgg_get_site_entity()->annotate('spam_login_filter_ip', $register_ip, ACCESS_PUBLIC);
+				return false;
 			}
 		}
 	}
 
-	return $spammer ? false : true;
+    // passed all the tests
+    return true;
 }
 
 function call_url($url) {

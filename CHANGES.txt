@@ -1,5 +1,10 @@
 Validate login against blacklist databases.
 
+2.1.1 (12/18/2015):
+ - fix email/ip whitelist logic
+ - cache bad ips on SFS failure
+ - check cached ips on each check
+
 2.1.0 - (09/04/2015):
  - remove fassim related code :(
  - javascript confirmation on "delete and report" user hover menu item
