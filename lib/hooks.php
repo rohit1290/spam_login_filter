@@ -54,6 +54,10 @@ function daily_cron($hook, $entity_type, $returnvalue, $params) {
 
 
 function filter_router($hook, $type, $return, $params) {
+    
+    if (elgg_is_admin_logged_in()) {
+        return $return;
+    }
 
 	// get uris to protect
 	$protect_setting = elgg_get_plugin_setting('protected_pages', PLUGIN_ID);
