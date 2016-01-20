@@ -495,9 +495,21 @@ function spam_login_filter_login_event($event, $type, $user) {
 	if ($banned && $metadata) {
 		foreach ($metadata as $m) {
 			foreach ($banned as $str) {
-				if (strpos($user->$m, $str) !== false) {
-					return false;
-				}
+                $value = $user->$m;
+
+                if (is_array($value)) {
+
+                    foreach ($value as $val) {
+                        if (strpos($val, $str) !== false) {
+                            return false;
+                        }
+                    }
+
+                } else {
+                    if (strpos($value, $str) !== false) {
+                        return false;
+                    }
+                }
 			}
 		}
 	}
