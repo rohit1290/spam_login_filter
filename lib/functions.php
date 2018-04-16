@@ -13,15 +13,12 @@ namespace Spam\LoginFilter;
 function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 	if ($checkemail) {
-		$email_whitelisted = is_email_whitelisted($register_email);
-        if ($email_whitelisted) {
+        if (is_email_whitelisted($register_email)) {
             return true; // not a spammer, no need for any further checks
         }
 	}
-    
-	$ip_whitelisted = is_ip_whitelisted($register_ip);
 
-	if ($ip_whitelisted) {
+	if (is_ip_whitelisted($register_ip)) {
 		// not a spammer, no need for any further checks
 		return true;
 	}

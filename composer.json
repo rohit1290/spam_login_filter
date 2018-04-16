@@ -4,10 +4,12 @@
     "description": "Elgg plugin that validates login against blacklist databases.",
     "homepage": "https://github.com/beck24/spam_login_filter",
     "keywords": ["elgg", "plugin", "spam", "analyzer"],
-    "license": "GPL-2.0",
+    "license": "GPL-2.0-only",
     "authors": [
         {
-            "name": "Ray J",
+            "name": "Ray J"
+        },
+        {
             "name": "Matt Beckett"
         }
     ],

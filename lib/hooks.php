@@ -54,7 +54,7 @@ function daily_cron($hook, $entity_type, $returnvalue, $params) {
 
 
 function filter_router($hook, $type, $return, $params) {
-    
+
     if (elgg_is_admin_logged_in()) {
         return $return;
     }
@@ -80,34 +80,8 @@ function filter_router($hook, $type, $return, $params) {
 		return $return;
 	}
 
-	if (is_ip_whitelisted()) {
-		return $return;
-	}
-
 	$ip = get_ip();
-
-	// we need to protect this page
-	//Check if the ip exists
-	$options = array(
-		"type" => "object",
-		"subtype" => "spam_login_filter_ip",
-		"metadata_name_value_pairs" => array(
-			"name" => "ip_address",
-			"value" => $ip,
-		),
-		"count" => true
-	);
-
-	$ia = elgg_set_ignore_access(true);
-
-	$spam_login_filter_ip_list = elgg_get_entities_from_metadata($options);
-
-	elgg_set_ignore_access($ia);
-
 	$deny = false;
-	if ($spam_login_filter_ip_list > 0) {
-		$deny = true;
-	}
 
 	if (!check_spammer('', $ip, false)) {
 		$deny = true;
@@ -171,4 +145,24 @@ function register_user($h, $t, $r, $p) {
 	}
 	
 	return $r;
+}
+
+function login_action_hook($h, $t, $r, $p) {
+	$username = get_input('username');
+
+	if (empty($username)) {
+		return $r;
+	}
+
+	// check if logging in with email address
+	if (strpos($username, '@') !== false && ($users = get_user_by_email($username))) {
+		$username = $users[0]->username;
+	}
+
+	$user = get_user_by_username($username);
+
+	if (login_event('', '', $user) === false) {
+		register_error(elgg_echo('spam_login_filter:access_denied'));
+		return false;
+	}
 }

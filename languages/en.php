@@ -7,6 +7,8 @@ return array(
 	'spam_login_filter:access_denied_ip_blacklist' => "Access denied due to spam issues (IP address blacklisted). Please contact the site administrator.",
 	'spam_login_filter:access_denied_country_blacklist' => "Access denied due to spam issues (Country blacklisted). Please contact the site administrator.",
 	'spam_login_filter:access_denied_region_blacklist' => "Access denied due to spam issues (Region blacklisted). Please contact the site administrator.",
+	'spam_login_filter:access_denied_banned_metadata' => "Access denied due to spam issues",
+	'spam_login_filter:access_denied' => "Access denied due to spam detection.",
 
 	//User menu
 	'spam_login_filter:delete_and_report' => "Delete and report as spammer",

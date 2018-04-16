@@ -1,5 +1,9 @@
 Validate login against blacklist databases.
 
+3.0.0 (04/14/2018):
+ - upgrade for Elgg 3
+ - no longer prevent admin login regardless of checks
+
 2.1.1 (12/18/2015):
  - fix email/ip whitelist logic
  - cache bad ips on SFS failure
