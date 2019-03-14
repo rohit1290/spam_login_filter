@@ -15,7 +15,7 @@ elgg_register_event_handler('init', 'system', function() {
 	elgg_register_plugin_hook_handler("action", "register", __NAMESPACE__ . "\\verify_action_hook", 999);
 	elgg_register_plugin_hook_handler("action", "login", __NAMESPACE__ . "\\login_action_hook", 999);
 	elgg_register_plugin_hook_handler('cron', 'daily', __NAMESPACE__ . '\\daily_cron');
-	elgg_register_plugin_hook_handler('route', 'all', __NAMESPACE__ . '\\filter_router');
+	elgg_register_plugin_hook_handler('route:rewrite', 'all', __NAMESPACE__ . '\\filter_router');
 	elgg_register_plugin_hook_handler('register', 'menu:user_hover', __NAMESPACE__ . '\\user_hover_menu', 1000);
 	elgg_register_plugin_hook_handler('register', 'user', __NAMESPACE__ . '\\register_user');
 
@@ -26,8 +26,8 @@ elgg_register_event_handler('init', 'system', function() {
 	elgg_register_event_handler('create', 'user', __NAMESPACE__ . '\\create_user_event');
 
 	elgg_register_admin_menu_item('administer', 'manageip', 'administer_utilities');
-	
-	
+
+
 	// register actions
 	elgg_register_action('spam_login_filter/delete_ip', __DIR__ . "/actions/delete_ip.php", 'admin');
 	elgg_register_action("spam_login_filter/delete", __DIR__ . "/actions/delete_and_report.php", "admin");
