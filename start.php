@@ -25,7 +25,14 @@ elgg_register_event_handler('init', 'system', function() {
 	elgg_register_event_handler('login:before', 'user', __NAMESPACE__ . '\\login_event');
 	elgg_register_event_handler('create', 'user', __NAMESPACE__ . '\\create_user_event');
 
-	elgg_register_admin_menu_item('administer', 'manageip', 'administer_utilities');
+	elgg_register_menu_item('page', [
+		'name' => 'manageip',
+		'href' => 'admin/administer_utilities/manageip',
+		'text' => elgg_echo('admin:administer_utilities:manageip'),
+		'context' => 'admin',
+		'parent_name' => 'administer_utilities',
+		'section' => 'administer',
+	]);
 
 
 	// register actions
