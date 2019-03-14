@@ -33,9 +33,4 @@ elgg_register_event_handler('init', 'system', function() {
 		'parent_name' => 'administer_utilities',
 		'section' => 'administer',
 	]);
-
-
-	// register actions
-	elgg_register_action('spam_login_filter/delete_ip', __DIR__ . "/actions/delete_ip.php", 'admin');
-	elgg_register_action("spam_login_filter/delete", __DIR__ . "/actions/delete_and_report.php", "admin");
 });
