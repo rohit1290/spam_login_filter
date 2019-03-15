@@ -36,7 +36,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 		return false;
     }
 
-	//Country Blacklist
+	// //Country Blacklist
   $ip_data = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".$register_ip));
   if($ip_data && $ip_data->geoplugin_countryName != null){
       $geo_country = $ip_data->geoplugin_countryCode;
@@ -45,7 +45,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
   $country_blacklisted = elgg_get_plugin_setting('fassim_blocked_country_list', "spam_login_filter");
   $country_blacklisted = str_replace(' ', '', $country_blacklisted); // cleanup
   $country_list = explode(",",$country_blacklisted);
-  if (in_array($geo_country, $country_list)) {
+  if (in_array($geo_country, $country_list) && (count($country_list)> 0) && ($geo_country!="")) {
       register_error(elgg_echo('Access denied as the service is not available in your country.'));
       notify_admin($register_email, $register_ip, "Country blacklist");
       return false;
