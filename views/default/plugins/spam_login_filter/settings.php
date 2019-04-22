@@ -27,6 +27,17 @@ $content .= "</div>";
 
 echo elgg_view_module("inline", $title, $content);
 
+// Country BlackList
+$title = elgg_echo("Country Blacklist");
+
+$content = "<div class='mbs'>";
+$content .= elgg_echo("Block the following countries:");
+$content .= elgg_view("input/text", array("name" => "params[fassim_blocked_country_list]", "value" => $plugin->fassim_blocked_country_list));
+$content .= elgg_view("output/longtext", array("value" => elgg_echo("(Just type in the country abbreviation of the countries you want to block, for multiple countries separated by comma, e.g. US,LV,HK. For a full list of supported country abbreviations click <a href='http://www.worldatlas.com/aatlas/ctycodes.htm' target='_blank'>Country Codes</a>)"), "class" => "elgg-subtext"));
+$content .= "</div>";
+
+echo elgg_view_module("inline", $title, $content);
+
 // Domain blacklist
 $title = elgg_echo("spam_login_filter:title_domain_blacklist");
 

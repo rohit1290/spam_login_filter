@@ -119,6 +119,7 @@ function user_hover_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo("spam_login_filter:delete_and_report"),
 			'is_action' => true,
 			'section' => 'admin',
+			'icon' => 'user-times',
 			'confirm' => elgg_echo('question:areyousure')
 		));
 		$return[] = $item;
