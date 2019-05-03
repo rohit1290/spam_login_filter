@@ -161,9 +161,11 @@ function login_action_hook($h, $t, $r, $p) {
 	}
 
 	$user = get_user_by_username($username);
-
-	if (login_event('', '', $user) === false) {
-		register_error(elgg_echo('spam_login_filter:access_denied'));
-		return false;
+	
+	if($user !== false) {
+		if (login_event('', '', $user) === false) {
+			register_error(elgg_echo('spam_login_filter:access_denied'));
+			return false;
+		}
 	}
 }
