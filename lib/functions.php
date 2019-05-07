@@ -1,6 +1,7 @@
 <?php
 
 namespace Spam\LoginFilter;
+use Elgg\Email;
 
 /**
  * checks email/ip for spammer status
@@ -296,14 +297,19 @@ function notify_admin($blockedEmail, $blockedIp, $reason) {
 			$from = 'noreply@' . $site->getDomain();
 		}
 
-		$message = elgg_echo('spam_login_filter:notify_message', array($blockedEmail, $blockedIp, $reason));
-
 		$to = elgg_get_plugin_setting('notify_mail_address', PLUGIN_ID);
 		if (!is_email_address($to)) {
 			return;
 		}
+		
+		$email = Email::factory([
+			'to' => $to,
+			'from' => $from,
+			'subject' => elgg_echo('spam_login_filter:notify_subject'),
+			'body' => elgg_echo('spam_login_filter:notify_message', array($blockedEmail, $blockedIp, $reason)),
+		]);
 
-		elgg_send_email($from, $to, elgg_echo('spam_login_filter:notify_subject'), $message);
+		elgg_send_email($email);
 	}
 }
 
