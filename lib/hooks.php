@@ -22,8 +22,7 @@ function verify_action_hook($hook, $type, $return, $params) {
 	if (check_spammer($email, $ip)) {
 		return $return;
 	}
-    
-	forward();
+	return false;
 }
 
 
@@ -138,8 +137,7 @@ function register_user($h, $t, $r, $p) {
 			$ia = elgg_set_ignore_access(true);
 			$p['user']->delete();
 			elgg_set_ignore_access($ia);
-			header("HTTP/1.1 403 Forbidden");
-			include(dirname(__DIR__) . "/pages/403.php");
+			forward('', '403');
 			exit;
 		}
 		return false;
