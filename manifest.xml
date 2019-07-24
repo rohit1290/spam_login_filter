@@ -3,13 +3,13 @@
     <name>Spam Login Filter</name>
     <id>spam_login_filter</id>
     <author>Matt Beckett</author>
-    <version>3.0.1</version>
+    <version>3.1.0</version>
     <description>Validate login against blacklist databases.</description>
     <website>http://www.elgg.org/</website>
     <copyright>(C) Ray J 2011-2014, Matt Beckett 2014-2018</copyright>
     <license>GNU Public License version 2</license>
     <requires>
         <type>elgg_release</type>
-        <version>3.0.0-alpha.1</version>
+        <version>3.1.0</version>
     </requires>
 </plugin_manifest>
