@@ -73,13 +73,8 @@ function filter_router(\Elgg\Hook $hook) {
 	}
 
 	$ip = get_ip();
-	$deny = false;
 
 	if (!check_spammer('', $ip, false)) {
-		$deny = true;
-	}
-
-	if ($deny) {
 		header("HTTP/1.1 403 Forbidden");
 
 		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
