@@ -7,15 +7,11 @@ use ElggMenuItem;
 /**
  * called on register action - checks user ip/email against rules
  * 
- * @param type $hook
- * @param type $entity_type
- * @param type $returnvalue
- * @param type $params
  * @return boolean
  */
-function verify_action_hook($hook, $type, $return, $params) {
+function verify_action_hook(\Elgg\Hook $hook) {
 	//Check against stopforumspam and domain blacklist
-
+	$return = $hook->getValue();
 	$email = get_input('email');
 	$ip = get_ip();
 
@@ -28,13 +24,8 @@ function verify_action_hook($hook, $type, $return, $params) {
 
 /**
  * called on daily cron - cleans up ip address cache
- * 
- * @param type $hook
- * @param type $entity_type
- * @param type $returnvalue
- * @param type $params
  */
-function daily_cron($hook, $entity_type, $returnvalue, $params) {
+function daily_cron() {
 	
 	$ia = elgg_set_ignore_access(true);
 	
@@ -52,11 +43,13 @@ function daily_cron($hook, $entity_type, $returnvalue, $params) {
 }
 
 
-function filter_router($hook, $type, $return, $params) {
-
-    if (elgg_is_admin_logged_in()) {
-        return $return;
-    }
+function filter_router(\Elgg\Hook $hook) {
+	
+	$return = $hook->getValue();
+	
+  if (elgg_is_admin_logged_in()) {
+    return $return;
+  }
 
 	// get uris to protect
 	$protect_setting = elgg_get_plugin_setting('protected_pages', PLUGIN_ID);
@@ -101,13 +94,11 @@ function filter_router($hook, $type, $return, $params) {
 /**
  * Add delete as spammer link to user hover menu
  * 
- * @param type $hook
- * @param type $type
- * @param type $return
- * @param type $params
  * @return type
  */
-function user_hover_menu($hook, $type, $return, $params) {
+function user_hover_menu(\Elgg\Hook $hook) {
+	$params = $hook->getParams();
+  $return = $hook->getValue();
 	$user = $params['entity'];
 
 	if ($user->guid != elgg_get_logged_in_user_guid() && elgg_is_admin_logged_in()) {
@@ -128,7 +119,10 @@ function user_hover_menu($hook, $type, $return, $params) {
 }
 
 
-function register_user($h, $t, $r, $p) {
+function register_user(\Elgg\Hook $hook) {
+	$p = $hook->getParams();
+  $r = $hook->getValue();
+
 	$email = $p['user']->email;
 	$ip = get_ip();
 	if (!check_spammer($email, $ip)) {
@@ -146,7 +140,8 @@ function register_user($h, $t, $r, $p) {
 	return $r;
 }
 
-function login_action_hook($h, $t, $r, $p) {
+function login_action_hook(\Elgg\Hook $hook) {
+  $r = $hook->getValue();
 	$username = get_input('username');
 
 	if (empty($username)) {
