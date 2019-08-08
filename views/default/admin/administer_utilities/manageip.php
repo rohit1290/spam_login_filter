@@ -5,13 +5,13 @@ $offset = (int) max(0, get_input("offset", 0));
 
 $site = elgg_get_site_entity();
 
-$options = array(
+$options = [
 	'guid' => $site->guid,
-	'annotation_names' => array('spam_login_filter_ip'),
+	'annotation_names' => ['spam_login_filter_ip'],
 	'offset' => $offset,
 	'limit' => $limit,
 	'count' => true
-);
+];
 
 
 if (!$count = elgg_get_annotations($options)) {
@@ -24,11 +24,11 @@ $options["count"]  = false;
 $spam_login_filter_ip_list = elgg_get_annotations($options);
 
 // setup pagination
-$pagination = elgg_view("navigation/pagination",array(
+$pagination = elgg_view("navigation/pagination", [
 	"offset" => $offset,
 	"count" => $count,
 	"limit" => $limit,
-));
+]);
 
 echo $pagination;
 
@@ -42,15 +42,15 @@ $form_body .= "<th class='center'>" . elgg_echo("delete") . "</th>";
 $form_body .= "</tr>";
 
 foreach ($spam_login_filter_ip_list as $spam_login_filter_ip) {
-	$form_body .= elgg_view("spam_login_filter/ip_detail", array("spam_login_filter_ip" => $spam_login_filter_ip));
+	$form_body .= elgg_view("spam_login_filter/ip_detail", ["spam_login_filter_ip" => $spam_login_filter_ip]);
 }
 
 $form_body .= "</table>";
 
-echo elgg_view("input/form", array(
+echo elgg_view("input/form", [
 	"body" => $form_body,
 	"name" => "spam_login_filter_delete_ip",
 	"class" => "elgg-form-settings"
-));
+]);
 
 echo $pagination;

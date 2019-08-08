@@ -6,7 +6,7 @@ use ElggMenuItem;
 
 /**
  * called on register action - checks user ip/email against rules
- * 
+ *
  * @return boolean
  */
 function verify_action_hook(\Elgg\Hook $hook) {
@@ -32,12 +32,12 @@ function daily_cron() {
 	//Retrieve the ips older than one week
 	$week_ago = time() - 604800; //(7 * 24 * 60 * 60);
 	
-	elgg_delete_annotations(array(
+	elgg_delete_annotations([
 		'guid' => elgg_get_site_entity()->guid,
 		'annotation_names' => 'spam_login_filter_ip',
 		'annotation_created_time_upper' => $week_ago,
 		'limit' => false
-	));
+	]);
 
 	elgg_set_ignore_access($ia);
 }
@@ -47,9 +47,9 @@ function filter_router(\Elgg\Hook $hook) {
 	
 	$return = $hook->getValue();
 	
-  if (elgg_is_admin_logged_in()) {
-    return $return;
-  }
+	if (elgg_is_admin_logged_in()) {
+		return $return;
+	}
 
 	// get uris to protect
 	$protect_setting = elgg_get_plugin_setting('protected_pages', PLUGIN_ID);
@@ -62,7 +62,7 @@ function filter_router(\Elgg\Hook $hook) {
 
 	// reconstruct URI
 	if (is_array($return['segments'])) {
-		$parts = array_merge(array($return['handler']), $return['segments']);
+		$parts = array_merge([$return['handler']], $return['segments']);
 		$uri = implode('/', $parts);
 	} else {
 		$uri = $return['handler'];
@@ -88,17 +88,16 @@ function filter_router(\Elgg\Hook $hook) {
 
 /**
  * Add delete as spammer link to user hover menu
- * 
+ *
  * @return type
  */
 function user_hover_menu(\Elgg\Hook $hook) {
 	$params = $hook->getParams();
-  $return = $hook->getValue();
+	$return = $hook->getValue();
 	$user = $params['entity'];
 
 	if ($user->guid != elgg_get_logged_in_user_guid() && elgg_is_admin_logged_in()) {
-
-		$item = ElggMenuItem::factory(array(
+		$item = ElggMenuItem::factory([
 			'name' => "spam_login_filter_delete",
 			'href' => "action/spam_login_filter/delete?guid={$user->guid}",
 			'text' => elgg_echo("spam_login_filter:delete_and_report"),
@@ -106,7 +105,7 @@ function user_hover_menu(\Elgg\Hook $hook) {
 			'section' => 'admin',
 			'icon' => 'user-times',
 			'confirm' => elgg_echo('question:areyousure')
-		));
+		]);
 		$return[] = $item;
 	}
 
@@ -116,7 +115,7 @@ function user_hover_menu(\Elgg\Hook $hook) {
 
 function register_user(\Elgg\Hook $hook) {
 	$p = $hook->getParams();
-  $r = $hook->getValue();
+	$r = $hook->getValue();
 
 	$email = $p['user']->email;
 	$ip = get_ip();
@@ -136,7 +135,7 @@ function register_user(\Elgg\Hook $hook) {
 }
 
 function login_action_hook(\Elgg\Hook $hook) {
-  $r = $hook->getValue();
+	$r = $hook->getValue();
 	$username = get_input('username');
 
 	if (empty($username)) {
@@ -150,7 +149,7 @@ function login_action_hook(\Elgg\Hook $hook) {
 
 	$user = get_user_by_username($username);
 	
-	if($user !== false) {
+	if ($user !== false) {
 		if (login_event('', '', $user) === false) {
 			register_error(elgg_echo('spam_login_filter:access_denied'));
 			return false;

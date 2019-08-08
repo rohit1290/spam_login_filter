@@ -14,9 +14,9 @@ use Elgg\Email;
 function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 	if ($checkemail) {
-        if (is_email_whitelisted($register_email)) {
-            return true; // not a spammer, no need for any further checks
-        }
+		if (is_email_whitelisted($register_email)) {
+			return true; // not a spammer, no need for any further checks
+		}
 	}
 
 	if (is_ip_whitelisted($register_ip)) {
@@ -24,33 +24,33 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 		return true;
 	}
 
-    // check ip cache
-	$blacklisted = elgg_get_annotations(array(
+	// check ip cache
+	$blacklisted = elgg_get_annotations([
 		'guid' => elgg_get_site_entity()->guid,
-		'annotation_names' => array('spam_login_filter_ip'),
-		'annotation_values' => array($register_ip)
-	));
+		'annotation_names' => ['spam_login_filter_ip'],
+		'annotation_values' => [$register_ip]
+	]);
 
-    if ($blacklisted) {
-        register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+	if ($blacklisted) {
+		register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
 		notify_admin($register_email, $register_ip, "Internal IP blacklist");
 		return false;
-    }
+	}
 
 	// //Country Blacklist
-  $ip_data = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".$register_ip));
-  if($ip_data && $ip_data->geoplugin_countryName != null){
-      $geo_country = $ip_data->geoplugin_countryCode;
-  }
+	$ip_data = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".$register_ip));
+	if ($ip_data && $ip_data->geoplugin_countryName != null) {
+		$geo_country = $ip_data->geoplugin_countryCode;
+	}
 
-  $country_blacklisted = elgg_get_plugin_setting('fassim_blocked_country_list', "spam_login_filter");
-  $country_blacklisted = str_replace(' ', '', $country_blacklisted); // cleanup
-  $country_list = explode(",",$country_blacklisted);
-  if (in_array($geo_country, $country_list) && (count($country_list)> 0) && ($geo_country!="")) {
-      register_error(elgg_echo('Access denied as the service is not available in your country.'));
-      notify_admin($register_email, $register_ip, "Country blacklist");
-      return false;
-  }
+	$country_blacklisted = elgg_get_plugin_setting('fassim_blocked_country_list', "spam_login_filter");
+	$country_blacklisted = str_replace(' ', '', $country_blacklisted); // cleanup
+	$country_list = explode(",", $country_blacklisted);
+	if (in_array($geo_country, $country_list) && (count($country_list)> 0) && ($geo_country!="")) {
+		register_error(elgg_echo('Access denied as the service is not available in your country.'));
+		notify_admin($register_email, $register_ip, "Country blacklist");
+		return false;
+	}
 
 	//Mail domain blacklist
 	if (elgg_get_plugin_setting('use_mail_domain_blacklist', PLUGIN_ID) == "yes") {
@@ -83,7 +83,6 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 	//StopForumSpam
 	if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
-
 		//check the e-mail adress
 		$url = "http://www.stopforumspam.com/api?email=" . $register_email . "&f=json";
 
@@ -99,7 +98,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 			}
 		}
 
-    	//e-mail not found in the database, now check the ip
+		//e-mail not found in the database, now check the ip
 		$url = "http://www.stopforumspam.com/api?ip=" . $register_ip . "&f=json";
 
 		$return = call_url($url);
@@ -111,15 +110,15 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 				register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
 				notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
 
-                // cache this ip
-                elgg_get_site_entity()->annotate('spam_login_filter_ip', $register_ip, ACCESS_PUBLIC);
+				// cache this ip
+				elgg_get_site_entity()->annotate('spam_login_filter_ip', $register_ip, ACCESS_PUBLIC);
 				return false;
 			}
 		}
 	}
 
-    // passed all the tests
-    return true;
+	// passed all the tests
+	return true;
 }
 
 function call_url($url) {
@@ -147,7 +146,7 @@ function call_url($url) {
 function get_banned_strings() {
 	$string = elgg_get_plugin_setting('banned_metadata', PLUGIN_ID);
 	if (!$string) {
-		return array();
+		return [];
 	}
 
 	$array = explode("\n", $string);
@@ -168,8 +167,7 @@ function get_ip() {
 	//check ip from share internet
 	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 		$realip = $_SERVER['HTTP_CLIENT_IP'];
-	}
-	elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		$realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
 	} else {
 		$realip = $_SERVER['REMOTE_ADDR'];
@@ -193,7 +191,7 @@ function get_sfs_api_key() {
 function get_metadata_names() {
 	$string = elgg_get_plugin_setting('user_metadata', PLUGIN_ID);
 	if (!$string) {
-		return array();
+		return [];
 	}
 
 	$array = explode("\n", $string);
@@ -306,7 +304,7 @@ function notify_admin($blockedEmail, $blockedIp, $reason) {
 			'to' => $to,
 			'from' => $from,
 			'subject' => elgg_echo('spam_login_filter:notify_subject'),
-			'body' => elgg_echo('spam_login_filter:notify_message', array($blockedEmail, $blockedIp, $reason)),
+			'body' => elgg_echo('spam_login_filter:notify_message', [$blockedEmail, $blockedIp, $reason]),
 		]);
 
 		elgg_send_email($email);
@@ -316,7 +314,7 @@ function notify_admin($blockedEmail, $blockedIp, $reason) {
 
 
 function strip_spaces($content) {
-	$searchSpaces = array(' ', '&nbsp;');
+	$searchSpaces = [' ', '&nbsp;'];
 	$content = str_replace($searchSpaces, '', $content);
 	return $content;
 }

@@ -5,7 +5,7 @@ namespace Spam\LoginFilter;
 /**
  * Called on the login user event
  * Checks for spammers
- * 
+ *
  * @param type $event
  * @param type $type
  * @param type $user
