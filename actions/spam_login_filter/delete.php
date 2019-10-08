@@ -9,7 +9,7 @@ $deleted = false;
 $guid = get_input('guid');
 $obj = get_entity($guid);
 
-if (!elgg_instanceof($obj, 'user')) {
+if (!$obj instanceof \ElggUser) {
 	forward(REFERER);
 }
 
