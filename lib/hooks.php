@@ -27,19 +27,19 @@ function verify_action_hook(\Elgg\Hook $hook) {
  */
 function daily_cron() {
 	
-	$ia = elgg_set_ignore_access(true);
+	elgg_call(ELGG_IGNORE_ACCESS, function() {
 	
-	//Retrieve the ips older than one week
-	$week_ago = time() - 604800; //(7 * 24 * 60 * 60);
-	
-	elgg_delete_annotations([
-		'guid' => elgg_get_site_entity()->guid,
-		'annotation_names' => 'spam_login_filter_ip',
-		'annotation_created_time_upper' => $week_ago,
-		'limit' => false
-	]);
+		//Retrieve the ips older than one week
+		$week_ago = time() - 604800; //(7 * 24 * 60 * 60);
+		
+		elgg_delete_annotations([
+			'guid' => elgg_get_site_entity()->guid,
+			'annotation_names' => 'spam_login_filter_ip',
+			'annotation_created_time_upper' => $week_ago,
+			'limit' => false
+		]);
 
-	elgg_set_ignore_access($ia);
+	});
 }
 
 
@@ -122,9 +122,9 @@ function register_user(\Elgg\Hook $hook) {
 	if (!check_spammer($email, $ip)) {
 		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
 			// explicitly delete the user before fowarding to 403
-			$ia = elgg_set_ignore_access(true);
-			$p['user']->delete();
-			elgg_set_ignore_access($ia);
+			elgg_call(ELGG_IGNORE_ACCESS, function() use ($p) {
+				$p['user']->delete();
+			});
 			forward('', '403');
 			exit;
 		}
