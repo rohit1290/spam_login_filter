@@ -11,7 +11,8 @@ namespace Spam\LoginFilter;
  * @param type $user
  * @return boolean
  */
-function login_event($event, $type, $user) {
+function login_event(\Elgg\Event $event) {
+	$user = $event->getObject();
 
 	if ($user->isAdmin()) {
 		return; // don't block admin logins
@@ -46,7 +47,8 @@ function login_event($event, $type, $user) {
 }
 
 
-function create_user_event($e, $t, $user) {
+function create_user_event(\Elgg\Event $event) {
+	$user = $event->getObject();
 	// check for logged in status, we don't want to record an admin ip address
 	// on an account they just created for example
 	if (!elgg_is_logged_in()) {
