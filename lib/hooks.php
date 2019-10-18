@@ -150,7 +150,7 @@ function login_action_hook(\Elgg\Hook $hook) {
 	$user = get_user_by_username($username);
 	
 	if ($user !== false) {
-		if (login_event('', '', $user) === false) {
+		if (spam_login_event_check($user) === false) {
 			register_error(elgg_echo('spam_login_filter:access_denied'));
 			return false;
 		}
