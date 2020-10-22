@@ -11,7 +11,7 @@ use Elgg\Email;
  * @param type $checkemail
  * @return boolean
  */
-function check_spammer($register_email, $register_ip, $checkemail = true) {
+function check_spammer($register_email, $register_ip, $checkemail = true, $show_error = true) {
 
 	if ($checkemail) {
 		if (is_email_whitelisted($register_email)) {
@@ -32,8 +32,10 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 	]);
 
 	if ($blacklisted) {
-		register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
-		notify_admin($register_email, $register_ip, "Internal IP blacklist");
+		if($show_error == true) {
+			register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+			notify_admin($register_email, $register_ip, "Internal IP blacklist");
+		}
 		return false;
 	}
 
@@ -47,8 +49,10 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 	$country_blacklisted = str_replace(' ', '', $country_blacklisted); // cleanup
 	$country_list = explode(",", $country_blacklisted);
 	if (in_array($geo_country, $country_list) && (count($country_list)> 0) && ($geo_country!="")) {
-		register_error(elgg_echo('Access denied as the service is not available in your country.'));
-		notify_admin($register_email, $register_ip, "Country blacklist");
+		if($show_error == true) {
+			register_error(elgg_echo('Access denied as the service is not available in your country.'));
+			notify_admin($register_email, $register_ip, "Country blacklist");
+		}
 		return false;
 	}
 
@@ -59,8 +63,10 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 		foreach ($blacklistedMailDomains as $domain) {
 			if ($mailDomain[1] == $domain) {
-				register_error(elgg_echo('spam_login_filter:access_denied_domain_blacklist'));
-				notify_admin($register_email, $register_ip, "Internal domain blacklist");
+				if($show_error == true) {
+					register_error(elgg_echo('spam_login_filter:access_denied_domain_blacklist'));
+					notify_admin($register_email, $register_ip, "Internal domain blacklist");
+				}
 				return false;
 				break;
 			}
@@ -73,8 +79,10 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 
 		foreach ($blacklistedMails as $blacklistedMail) {
 			if ($blacklistedMail == $register_email) {
-				register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
-				notify_admin($register_email, $register_ip, "Internal e-mail blacklist");
+				if($show_error == true) {
+					register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
+					notify_admin($register_email, $register_ip, "Internal e-mail blacklist");
+				}
 				return false;
 				break;
 			}
@@ -92,8 +100,10 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 			$data = json_decode($return);
 			$email_frequency = $data->email->frequency;
 			if ($email_frequency != '0') {
-				register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
-				notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
+				if($show_error == true) {
+					register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
+					notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
+				}
 				return false;
 			}
 		}
@@ -107,9 +117,10 @@ function check_spammer($register_email, $register_ip, $checkemail = true) {
 			$data = json_decode($return);
 			$ip_frequency = $data->ip->frequency;
 			if ($ip_frequency != '0') {
-				register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
-				notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
-
+				if($show_error == true) {
+					register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+					notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
+				}
 				// cache this ip
 				elgg_get_site_entity()->annotate('spam_login_filter_ip', $register_ip, ACCESS_PUBLIC);
 				return false;
@@ -329,7 +340,7 @@ function spam_login_event_check($user) {
 		$ip = get_ip();
 		$user->ip_address = $ip;
 		if ($check_login != 'no' || !$user->last_login) { // do it by default
-			if (!check_spammer($user->email, $ip, true)) {
+			if (!check_spammer($user->email, $ip)) {
 				notify_admin($user->email, $ip, "Existing member identified as spammer has tried to login, check this account");
 				return false;
 			}

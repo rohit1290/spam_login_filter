@@ -119,7 +119,7 @@ function register_user(\Elgg\Hook $hook) {
 
 	$email = $p['user']->email;
 	$ip = get_ip();
-	if (!check_spammer($email, $ip)) {
+	if (!check_spammer($email, $ip, true, false)) {
 		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
 			// explicitly delete the user before fowarding to 403
 			elgg_call(ELGG_IGNORE_ACCESS, function() use ($p) {
