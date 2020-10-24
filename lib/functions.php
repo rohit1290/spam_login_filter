@@ -92,38 +92,36 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 	//StopForumSpam
 	if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 		//check the e-mail adress
-		$url = "http://www.stopforumspam.com/api?email=" . $register_email . "&f=json";
+		$url = "http://api.stopforumspam.com/api?ip=" . $register_ip . "&email=" . $register_email . "&f=json";
 
 		$return = call_url($url);
 
 		if ($return != false) {
+			
 			$data = json_decode($return);
-			$email_frequency = $data->email->frequency;
-			if ($email_frequency != '0') {
-				if($show_error == true) {
-					register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
-					notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
+			
+			if(array_key_exists("email",$data)) {
+				$email_frequency = (int)$data->email->frequency;
+			  if ($email_frequency != 0) {
+					if($show_error == true) {
+						register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
+						notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
+					}
+					return false;
 				}
-				return false;
 			}
-		}
 
-		//e-mail not found in the database, now check the ip
-		$url = "http://www.stopforumspam.com/api?ip=" . $register_ip . "&f=json";
-
-		$return = call_url($url);
-
-		if ($return != false) {
-			$data = json_decode($return);
-			$ip_frequency = $data->ip->frequency;
-			if ($ip_frequency != '0') {
-				if($show_error == true) {
-					register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
-					notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
+			if(array_key_exists("ip",$data)) {
+				$ip_frequency = (int)$data->ip->frequency;
+		    if ($ip_frequency != 0) {
+					if($show_error == true) {
+						register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+						notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
+					}
+					// cache this ip
+					elgg_get_site_entity()->annotate('spam_login_filter_ip', $register_ip, ACCESS_PUBLIC);
+					return false;
 				}
-				// cache this ip
-				elgg_get_site_entity()->annotate('spam_login_filter_ip', $register_ip, ACCESS_PUBLIC);
-				return false;
 			}
 		}
 	}
