@@ -15,7 +15,7 @@ elgg_register_event_handler('init', 'system', function() {
 	elgg_register_plugin_hook_handler("action:validate", "register", __NAMESPACE__ . "\\verify_action_hook");
 	elgg_register_plugin_hook_handler("action:validate", "login", __NAMESPACE__ . "\\login_action_hook");
 	elgg_register_plugin_hook_handler('cron', 'daily', __NAMESPACE__ . '\\daily_cron');
-	elgg_register_plugin_hook_handler('route:rewrite', 'all', __NAMESPACE__ . '\\filter_router');
+	elgg_register_plugin_hook_handler('route', 'all', __NAMESPACE__ . '\\filter_router');
 	elgg_register_plugin_hook_handler('register', 'menu:user_hover', __NAMESPACE__ . '\\user_hover_menu', 1000);
 	elgg_register_plugin_hook_handler('register', 'user', __NAMESPACE__ . '\\register_user');
 

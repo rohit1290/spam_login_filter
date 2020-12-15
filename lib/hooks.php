@@ -44,7 +44,7 @@ function daily_cron() {
 
 
 function filter_router(\Elgg\Hook $hook) {
-	
+
 	$return = $hook->getValue();
 	
 	if (elgg_is_admin_logged_in()) {
@@ -60,29 +60,18 @@ function filter_router(\Elgg\Hook $hook) {
 	$protect = explode("\n", $protect_setting);
 	$protect_uris = array_map('trim', $protect);
 
-	// reconstruct URI
-	if (is_array($return['segments'])) {
-		$parts = array_merge([$return['handler']], $return['segments']);
-		$uri = implode('/', $parts);
-	} else {
-		$uri = $return['handler'];
-	}
+	$uri = elgg_get_context();
 
 	if (!in_array($uri, $protect_uris)) {
 		return $return;
 	}
 
 	$ip = get_ip();
-
 	if (!check_spammer('', $ip, false)) {
-		header("HTTP/1.1 403 Forbidden");
-
-		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
-			include(dirname(__DIR__) . "/pages/403.php");
-		}
-
-		return false;
+		throw new \Elgg\HttpException(elgg_echo('spam_login_filter:access_denied'), ELGG_HTTP_FORBIDDEN);
 	}
+	
+	return $return;
 }
 
 
@@ -125,8 +114,7 @@ function register_user(\Elgg\Hook $hook) {
 			elgg_call(ELGG_IGNORE_ACCESS, function() use ($p) {
 				$p['user']->delete();
 			});
-			forward('', '403');
-			exit;
+			throw new \Elgg\HttpException(elgg_echo('spam_login_filter:access_denied'), ELGG_HTTP_FORBIDDEN);
 		}
 		return false;
 	}
