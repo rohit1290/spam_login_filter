@@ -5,7 +5,7 @@ $error = false;
 
 if (!$spam_login_filter_ip_list) {
 	register_error(elgg_echo('spam_login_filter:errors:unknown_ips'));
-	forward('admin/administer_utilities/manageip');
+	return elgg_redirect_response('admin/administer_utilities/manageip');
 }
 
 foreach ($spam_login_filter_ip_list as $id) {
@@ -29,4 +29,4 @@ if ($error) {
 	system_message($message_txt);
 }
 
-forward('admin/administer_utilities/manageip');
+return elgg_redirect_response('admin/administer_utilities/manageip');

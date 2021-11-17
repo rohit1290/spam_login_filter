@@ -1,6 +1,5 @@
 <?php
 
-namespace Spam\LoginFilter;
 use Elgg\Email;
 
 /**
@@ -9,7 +8,7 @@ use Elgg\Email;
  * @param type $register_email
  * @param type $register_ip
  * @param type $checkemail
- * @return boolean
+ * @return boolean (show message false) or string (show message is true)
  */
 function check_spammer($register_email, $register_ip, $checkemail = true, $show_error = true) {
 
@@ -33,7 +32,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 
 	if ($blacklisted) {
 		if($show_error == true) {
-			register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+			return elgg_echo('spam_login_filter:access_denied_ip_blacklist');
 			notify_admin($register_email, $register_ip, "Internal IP blacklist");
 		}
 		return false;
@@ -50,7 +49,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 	$country_list = explode(",", $country_blacklisted);
 	if (in_array($geo_country, $country_list) && (count($country_list)> 0) && ($geo_country!="")) {
 		if($show_error == true) {
-			register_error(elgg_echo('Access denied as the service is not available in your country.'));
+			return elgg_echo('spam_login_filter:access_denied_country_blacklist');
 			notify_admin($register_email, $register_ip, "Country blacklist");
 		}
 		return false;
@@ -64,7 +63,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 		foreach ($blacklistedMailDomains as $domain) {
 			if ($mailDomain[1] == $domain) {
 				if($show_error == true) {
-					register_error(elgg_echo('spam_login_filter:access_denied_domain_blacklist'));
+					return elgg_echo('spam_login_filter:access_denied_domain_blacklist');
 					notify_admin($register_email, $register_ip, "Internal domain blacklist");
 				}
 				return false;
@@ -80,7 +79,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 		foreach ($blacklistedMails as $blacklistedMail) {
 			if ($blacklistedMail == $register_email) {
 				if($show_error == true) {
-					register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
+					return elgg_echo('spam_login_filter:access_denied_mail_blacklist');
 					notify_admin($register_email, $register_ip, "Internal e-mail blacklist");
 				}
 				return false;
@@ -104,7 +103,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 				$email_frequency = (int)$data->email->frequency;
 			  if ($email_frequency != 0) {
 					if($show_error == true) {
-						register_error(elgg_echo('spam_login_filter:access_denied_mail_blacklist'));
+						return elgg_echo('spam_login_filter:access_denied_mail_blacklist');
 						notify_admin($register_email, $register_ip, "Stopforumspam e-mail blacklist");
 					}
 					return false;
@@ -115,7 +114,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 				$ip_frequency = (int)$data->ip->frequency;
 		    if ($ip_frequency != 0) {
 					if($show_error == true) {
-						register_error(elgg_echo('spam_login_filter:access_denied_ip_blacklist'));
+						return elgg_echo('spam_login_filter:access_denied_ip_blacklist');
 						notify_admin($register_email, $register_ip, "Stopforumspam IP blacklist");
 					}
 					// cache this ip
@@ -215,7 +214,7 @@ function get_upgrade_version() {
 }
 
 function set_upgrade_version($version) {
-	return elgg_set_plugin_setting('upgrade_version', $version, PLUGIN_ID);
+	return elgg_get_plugin_from_id(PLUGIN_ID)->setSetting('upgrade_version', $version);
 }
 
 
@@ -330,7 +329,7 @@ function strip_spaces($content) {
 
 function spam_login_event_check($user) {
 		if ($user->isAdmin()) {
-			return; // don't block admin logins
+			return true; // don't block admin logins
 		}
 
 		$check_login = elgg_get_plugin_setting('event_login', PLUGIN_ID);
@@ -338,9 +337,9 @@ function spam_login_event_check($user) {
 		$ip = get_ip();
 		$user->ip_address = $ip;
 		if ($check_login != 'no' || !$user->last_login) { // do it by default
-			if (!check_spammer($user->email, $ip)) {
+			if (!check_spammer($user->email, $ip, true, false)) {
 				notify_admin($user->email, $ip, "Existing member identified as spammer has tried to login, check this account");
-				return false;
+				return elgg_echo('spam_login_filter:access_denied');
 			}
 
 			// check user metadata for banned words/phrases
@@ -352,11 +351,11 @@ function spam_login_event_check($user) {
 					foreach ($banned as $str) {
 						$test_str = (string) $user->$m;
 						if (strpos($test_str, $str) !== false) {
-							register_error(elgg_echo('spam_login_filter:access_denied_banned_metadata'));
-							return false;
+							return elgg_echo('spam_login_filter:access_denied_banned_metadata');
 						}
 					}
 				}
 			}
 		}
+		return true;
 }

@@ -1,7 +1,5 @@
 <?php
 
-namespace Spam\LoginFilter;
-
 $spam_login_filter_ip = elgg_extract("spam_login_filter_ip", $vars);
 
 if (!$spam_login_filter_ip) {

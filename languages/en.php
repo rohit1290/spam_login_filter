@@ -61,10 +61,6 @@ Reason: %s.",
 
 	'spam_login_filter:tracker:help' => "(URL of trace website. Use '%s' to indicate where the IP should be. This URL will be overridden by the \"IP Tracker\" plugin if it's used)",
 
-	'spam_login_filter:custom_error_page' => "In the event of a blocked page, show a custom error page?",
-	'spam_login_filter:custom_error_page:no' => "No, use browser default",
-	'spam_login_filter:custom_error_page:yes' => "Yes, use a site page",
-
 	//Configuration form - Titles
 	'spam_login_filter:title_stopforumspam' => "Stopforumspam",
 	'spam_login_filter:title_fassim' => "Fassim",

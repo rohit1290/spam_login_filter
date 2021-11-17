@@ -1,7 +1,5 @@
 <?php
 
-namespace Spam\LoginFilter;
-
 /**
  * Called on the login user event
  * Checks for spammers

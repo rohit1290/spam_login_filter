@@ -1,9 +1,5 @@
 <?php
 
-namespace Spam\LoginFilter;
-use ElggMenuItem;
-
-
 /**
  * called on register action - checks user ip/email against rules
  *
@@ -14,10 +10,14 @@ function verify_action_hook(\Elgg\Hook $hook) {
 	$return = $hook->getValue();
 	$email = get_input('email');
 	$ip = get_ip();
-
-	if (check_spammer($email, $ip)) {
-		return $return;
+	
+	$result = check_spammer($email, $ip, true, true);
+	if(is_bool($result)) {
+		if ($result == true) {
+			return $return;
+		}
 	}
+	throw new \Elgg\Exceptions\Http\ValidationException($result);
 	return false;
 }
 
@@ -67,10 +67,10 @@ function filter_router(\Elgg\Hook $hook) {
 	}
 
 	$ip = get_ip();
-	if (!check_spammer('', $ip, false)) {
+	$result = check_spammer('', $ip, false, false);
+	if ($result !== true) {
 		throw new \Elgg\HttpException(elgg_echo('spam_login_filter:access_denied'), ELGG_HTTP_FORBIDDEN);
 	}
-	
 	return $return;
 }
 
@@ -102,20 +102,18 @@ function user_hover_menu(\Elgg\Hook $hook) {
 }
 
 
-function register_user(\Elgg\Hook $hook) {
+function verify_register_user(\Elgg\Hook $hook) {
 	$p = $hook->getParams();
 	$r = $hook->getValue();
 
 	$email = $p['user']->email;
 	$ip = get_ip();
-	if (!check_spammer($email, $ip, true, false)) {
-		if (elgg_get_plugin_setting("custom_error_page", PLUGIN_ID) == "yes") {
-			// explicitly delete the user before fowarding to 403
-			elgg_call(ELGG_IGNORE_ACCESS, function() use ($p) {
-				$p['user']->delete();
-			});
-			throw new \Elgg\HttpException(elgg_echo('spam_login_filter:access_denied'), ELGG_HTTP_FORBIDDEN);
-		}
+	$result = check_spammer($email, $ip, true, false);
+	if ($result !== true) {
+		elgg_call(ELGG_IGNORE_ACCESS, function() use ($p) {
+			$p['user']->delete();
+		});
+		throw new \Elgg\Exceptions\Configuration\RegistrationException($result);
 		return false;
 	}
 	
@@ -138,9 +136,11 @@ function login_action_hook(\Elgg\Hook $hook) {
 	$user = get_user_by_username($username);
 	
 	if ($user !== false) {
-		if (spam_login_event_check($user) === false) {
-			register_error(elgg_echo('spam_login_filter:access_denied'));
+		$result = spam_login_event_check($user);
+		if(!is_bool($result)) {
+			throw new \Elgg\Exceptions\Http\ValidationException($result);
 			return false;
 		}
 	}
+	return $r;
 }

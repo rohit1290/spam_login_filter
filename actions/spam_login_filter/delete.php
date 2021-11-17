@@ -1,6 +1,5 @@
 <?php
 
-namespace Spam\LoginFilter;
 use ElggUser;
 
 $deleted = false;
@@ -10,7 +9,7 @@ $guid = get_input('guid');
 $obj = get_entity($guid);
 
 if (!$obj instanceof \ElggUser) {
-	forward(REFERER);
+	return elgg_redirect_response(REFERER);
 }
 
 $name = $obj->name;
@@ -21,7 +20,7 @@ $api_key = get_sfs_api_key();
 
 if (empty($ip_address)) {
 	register_error(elgg_echo('spam_login_filter:empty_ip_error'));
-	forward(REFERER);
+	return elgg_redirect_response(REFERER);
 } else {
 	if (elgg_get_plugin_setting('use_ip_blacklist_cache', PLUGIN_ID) == "yes") {
 		// Blacklist the IP
@@ -45,7 +44,7 @@ if (empty($ip_address)) {
 if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 	if (empty($api_key)) {
 		register_error(elgg_echo('spam_login_filter:empty_api_key_error'));
-		forward(REFERER);
+		return elgg_redirect_response(REFERER);
 	}
 
 	if (!empty($ip_address) && !empty($api_key)) {
@@ -55,14 +54,14 @@ if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 
 		if ($return == false) {
 			register_error(elgg_echo('spam_login_filter:unable_report'));
-			forward(REFERER);
+			return elgg_redirect_response(REFERER);
 		}
 	}
 }
 
 if (($obj instanceof ElggUser) && ($obj->canEdit())) {
 	if ($obj->delete()) {
-		system_message(elgg_echo('spam_login_filter:user_deleted', [$name]));
+		elgg_ok_response('', elgg_echo('spam_login_filter:user_deleted', [$name]));
 		$deleted = true;
 	} else {
 		register_error(elgg_echo('spam_login_filter:user_not_deleted'));
@@ -77,4 +76,4 @@ if ($deleted) {
 	$forward = "admin/";
 }
 
-forward($forward);
+return elgg_redirect_response($forward);

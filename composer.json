@@ -1,22 +1,18 @@
 {
-    "name": "beck24/spam_login_filter",
-    "type": "elgg-plugin",
-    "description": "Elgg plugin that validates login against blacklist databases.",
-    "homepage": "https://github.com/beck24/spam_login_filter",
-    "keywords": ["elgg", "plugin", "spam", "analyzer"],
-    "license": "GPL-2.0-only",
-    "authors": [
-        {
-            "name": "Ray J"
-        },
-        {
-            "name": "Matt Beckett"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/beck24/spam_login_filter/issues"
-    },
-    "require": {
-        "composer/installers": ">=1.0.8"
-    }
+	"name": "spam_login_filter",
+	"description": "Validate login against blacklist databases",
+	"homepage": "http://www.campuskarma.in/",
+	"type": "elgg-plugin",
+	"keywords": ["elgg", "plugin"],
+	"license": "Private Use",
+	"support": {
+		"source": "https://github.com/rohit1290/spam_login_filter",
+		"issues": "https://github.com/rohit1290/spam_login_filter/issues"
+	},
+	"require": {
+		"composer/installers": "^1.0.8"
+	},
+	"conflict": {
+		"elgg/elgg": "<4.0"
+	}
 }
