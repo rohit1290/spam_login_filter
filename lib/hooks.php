@@ -69,7 +69,7 @@ function filter_router(\Elgg\Hook $hook) {
 	$ip = get_ip();
 	$result = check_spammer('', $ip, false, false);
 	if ($result !== true) {
-		throw new \Elgg\HttpException(elgg_echo('spam_login_filter:access_denied'), ELGG_HTTP_FORBIDDEN);
+		throw new \Elgg\Exceptions\HttpException(elgg_echo('spam_login_filter:access_denied'), ELGG_HTTP_FORBIDDEN);
 	}
 	return $return;
 }
