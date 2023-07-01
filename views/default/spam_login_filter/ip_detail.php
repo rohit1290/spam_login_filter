@@ -16,7 +16,7 @@ $delete = elgg_view("output/url", [
 	"title" => elgg_echo("delete")
 ]);
 
-if ($setting = elgg_get_plugin_setting("tracker_url", PLUGIN_ID)) {
+if ($setting = elgg_get_plugin_setting("tracker_url", 'spam_login_filter')) {
 	$tracker_url = sprintf($setting, $spam_login_filter_ip->value);
 	// Create tracker link
 	$ip_with_tracker_link = elgg_view("output/url", [

@@ -9,7 +9,7 @@ $guid = get_input('guid');
 $obj = get_entity($guid);
 
 if (!$obj instanceof \ElggUser) {
-	return elgg_redirect_response(REFERER);
+	return elgg_redirect_response(REFERRER);
 }
 
 $name = $obj->name;
@@ -19,10 +19,10 @@ $ip_address = $obj->ip_address;
 $api_key = get_sfs_api_key();
 
 if (empty($ip_address)) {
-	register_error(elgg_echo('spam_login_filter:empty_ip_error'));
-	return elgg_redirect_response(REFERER);
+	elgg_register_error_message(elgg_echo('spam_login_filter:empty_ip_error'));
+	return elgg_redirect_response(REFERRER);
 } else {
-	if (elgg_get_plugin_setting('use_ip_blacklist_cache', PLUGIN_ID) == "yes") {
+	if (elgg_get_plugin_setting('use_ip_blacklist_cache', 'spam_login_filter') == "yes") {
 		// Blacklist the IP
 		//Check if the ip exists
 		$options = [
@@ -41,10 +41,10 @@ if (empty($ip_address)) {
 }
 
 //Report to stopforumspam.com
-if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
+if (elgg_get_plugin_setting('use_stopforumspam', 'spam_login_filter') == "yes") {
 	if (empty($api_key)) {
-		register_error(elgg_echo('spam_login_filter:empty_api_key_error'));
-		return elgg_redirect_response(REFERER);
+		elgg_register_error_message(elgg_echo('spam_login_filter:empty_api_key_error'));
+		return elgg_redirect_response(REFERRER);
 	}
 
 	if (!empty($ip_address) && !empty($api_key)) {
@@ -53,8 +53,8 @@ if (elgg_get_plugin_setting('use_stopforumspam', PLUGIN_ID) == "yes") {
 		$return = call_url($url);
 
 		if ($return == false) {
-			register_error(elgg_echo('spam_login_filter:unable_report'));
-			return elgg_redirect_response(REFERER);
+			elgg_register_error_message(elgg_echo('spam_login_filter:unable_report'));
+			return elgg_redirect_response(REFERRER);
 		}
 	}
 }
@@ -64,14 +64,14 @@ if (($obj instanceof ElggUser) && ($obj->canEdit())) {
 		elgg_ok_response('', elgg_echo('spam_login_filter:user_deleted', [$name]));
 		$deleted = true;
 	} else {
-		register_error(elgg_echo('spam_login_filter:user_not_deleted'));
+		elgg_register_error_message(elgg_echo('spam_login_filter:user_not_deleted'));
 	}
 } else {
-	register_error(elgg_echo('spam_login_filter:user_not_deleted'));
+	elgg_register_error_message(elgg_echo('spam_login_filter:user_not_deleted'));
 }
 
 // forward to user administration if on a user's page as it no longer exists
-$forward = REFERER;
+$forward = REFERRER;
 if ($deleted) {
 	$forward = "admin/";
 }

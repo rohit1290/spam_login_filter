@@ -52,7 +52,7 @@ function filter_router(\Elgg\Hook $hook) {
 	}
 
 	// get uris to protect
-	$protect_setting = elgg_get_plugin_setting('protected_pages', PLUGIN_ID);
+	$protect_setting = elgg_get_plugin_setting('protected_pages', 'spam_login_filter');
 	if (empty($protect_setting)) {
 		return $return;
 	}
@@ -129,11 +129,11 @@ function login_action_hook(\Elgg\Hook $hook) {
 	}
 
 	// check if logging in with email address
-	if (strpos($username, '@') !== false && ($users = get_user_by_email($username))) {
+	if (strpos($username, '@') !== false && ($users = elgg_get_user_by_email($username))) {
 		$username = $users[0]->username;
 	}
 
-	$user = get_user_by_username($username);
+	$user = elgg_get_user_by_username($username);
 	
 	if ($user !== false) {
 		$result = spam_login_event_check($user);

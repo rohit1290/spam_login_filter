@@ -4,7 +4,7 @@ $spam_login_filter_ip_list = get_input('spam_login_filter_ip_list');
 $error = false;
 
 if (!$spam_login_filter_ip_list) {
-	register_error(elgg_echo('spam_login_filter:errors:unknown_ips'));
+	elgg_register_error_message(elgg_echo('spam_login_filter:errors:unknown_ips'));
 	return elgg_redirect_response('admin/administer_utilities/manageip');
 }
 
@@ -24,9 +24,9 @@ if (count($spam_login_filter_ip_list) == 1) {
 }
 
 if ($error) {
-	register_error($error_txt);
+	elgg_register_error_message($error_txt);
 } else {
-	system_message($message_txt);
+	elgg_register_success_message($message_txt);
 }
 
 return elgg_redirect_response('admin/administer_utilities/manageip');
