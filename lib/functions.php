@@ -97,10 +97,10 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 
 		if ($return != false) {
 			
-			$data = json_decode($return);
+			$data = json_decode($return, true);
 			
 			if(array_key_exists("email",$data)) {
-				$email_frequency = (int)$data->email->frequency;
+				$email_frequency = (int)$data['email']['frequency'];
 			  if ($email_frequency != 0) {
 					if($show_error == true) {
 						return elgg_echo('spam_login_filter:access_denied_mail_blacklist');
@@ -111,7 +111,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 			}
 
 			if(array_key_exists("ip",$data)) {
-				$ip_frequency = (int)$data->ip->frequency;
+				$ip_frequency = (int)$data['ip']['frequency'];
 		    if ($ip_frequency != 0) {
 					if($show_error == true) {
 						return elgg_echo('spam_login_filter:access_denied_ip_blacklist');
@@ -208,7 +208,7 @@ function get_metadata_names() {
 	return $array;
 }
 
-// 
+//
 // function get_upgrade_version() {
 // 	return elgg_get_plugin_setting('upgrade_version', 'spam_login_filter');
 // }
