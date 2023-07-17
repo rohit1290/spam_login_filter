@@ -128,14 +128,9 @@ function login_action_hook(\Elgg\Hook $hook) {
 		return $r;
 	}
 
-	// check if logging in with email address
-	if (strpos($username, '@') !== false && ($users = elgg_get_user_by_email($username))) {
-		$username = $users[0]->username;
-	}
-
-	$user = elgg_get_user_by_username($username);
+	$user = elgg_get_user_by_username($username, true);
 	
-	if ($user !== false) {
+	if ($user instanceof \ElggUser) {
 		$result = spam_login_event_check($user);
 		if(!is_bool($result)) {
 			throw new \Elgg\Exceptions\Http\ValidationException($result);
