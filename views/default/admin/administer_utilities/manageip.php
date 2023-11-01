@@ -37,7 +37,7 @@ $form_body .= "<table class='elgg-table-alt'>";
 // set a nice table header
 $form_body .= "<tr>";
 $form_body .= "<th>" . elgg_echo("spam_login_filter:admin:ip_address") . "</th>";
-$form_body .= "<th colspan=2>" . elgg_echo("spam_login_filter:admin:ip_date_created") . "</th>";
+$form_body .= "<th>" . elgg_echo("spam_login_filter:admin:ip_date_created") . "</th>";
 $form_body .= "<th class='center'>" . elgg_echo("delete") . "</th>";
 $form_body .= "</tr>";
 
@@ -47,10 +47,6 @@ foreach ($spam_login_filter_ip_list as $spam_login_filter_ip) {
 
 $form_body .= "</table>";
 
-echo elgg_view("input/form", [
-	"body" => $form_body,
-	"name" => "spam_login_filter_delete_ip",
-	"class" => "elgg-form-settings"
-]);
+echo elgg_format_element('div', ["class" => "elgg-form-settings"], $form_body);
 
 echo $pagination;

@@ -6,7 +6,7 @@ if (!$spam_login_filter_ip) {
 	return;
 }
 
-$created = elgg_view_friendly_time($spam_login_filter_ip->time_created);
+// $created = elgg_view_friendly_time($spam_login_filter_ip->time_created);
 $created_date = htmlspecialchars(date(elgg_echo("friendlytime:date_format"), $spam_login_filter_ip->time_created));
 
 $delete = elgg_view("output/url", [
@@ -30,7 +30,7 @@ if ($setting = elgg_get_plugin_setting("tracker_url", 'spam_login_filter')) {
 
 echo "<tr>";
 echo "<td>" . $ip_with_tracker_link . "</td>";
-echo "<td>" . $created . "</td>";
+// echo "<td>" . $created . "</td>";
 echo "<td>" . $created_date . "</td>";
 echo "<td class='center'>" . $delete . "</td>";
 echo "</tr>";
