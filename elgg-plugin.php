@@ -6,7 +6,7 @@ require_once __DIR__ . '/lib/functions.php';
 return [
 	'plugin' => [
 		'name' => 'Spam Login Filter',
-		'version' => '5.0',
+		'version' => '5.1',
 		'dependencies' => [],
 	],
 	'bootstrap' => SpamLoginFilter::class,

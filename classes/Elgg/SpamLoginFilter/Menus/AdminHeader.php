@@ -27,7 +27,7 @@ class AdminHeader {
       'name' => 'administer_utilities:manageip',
       'text' => elgg_echo('admin:administer_utilities:manageip'),
       'href' => 'admin/administer_utilities/manageip',
-      'parent_name' => 'administer_utilities',
+      'parent_name' => 'utilities',
 		]);
     
 		return $return;
