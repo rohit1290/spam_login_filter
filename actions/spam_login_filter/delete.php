@@ -1,7 +1,5 @@
 <?php
 
-use ElggUser;
-
 $deleted = false;
 
 // Get the user
