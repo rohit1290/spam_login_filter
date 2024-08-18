@@ -4,9 +4,9 @@ use Elgg\DefaultPluginBootstrap;
 class SpamLoginFilter extends DefaultPluginBootstrap {
 
   public function init() {
-    // register hooks
-    elgg_register_event_handler("action:validate", "register", "verify_action_hook");
-    elgg_register_event_handler("action:validate", "login", "login_action_hook");
+    // register events
+    elgg_register_event_handler("action:validate", "register", "verify_action_event");
+    elgg_register_event_handler("action:validate", "login", "login_action_event");
     elgg_register_event_handler('cron', 'daily', 'daily_cron');
     elgg_register_event_handler('route', 'all', 'filter_router');
     elgg_register_event_handler('register', 'menu:user_hover', 'user_hover_menu', 1000);

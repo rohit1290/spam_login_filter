@@ -39,6 +39,7 @@ function check_spammer($register_email, $register_ip, $checkemail = true, $show_
 	}
 
 	// //Country Blacklist
+	$geo_country = [];
 	$ip_data = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".$register_ip));
 	if ($ip_data && $ip_data->geoplugin_countryName != null) {
 		$geo_country = $ip_data->geoplugin_countryCode;

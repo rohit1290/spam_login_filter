@@ -1,12 +1,11 @@
 <?php
-require_once __DIR__ . '/lib/hooks.php';
 require_once __DIR__ . '/lib/events.php';
 require_once __DIR__ . '/lib/functions.php';
 
 return [
 	'plugin' => [
 		'name' => 'Spam Login Filter',
-		'version' => '5.1',
+		'version' => '6.0',
 		'dependencies' => [],
 	],
 	'bootstrap' => SpamLoginFilter::class,
