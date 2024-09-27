@@ -71,7 +71,7 @@ if (($obj instanceof ElggUser) && ($obj->canEdit())) {
 // forward to user administration if on a user's page as it no longer exists
 $forward = REFERRER;
 if ($deleted) {
-	$forward = "admin/";
+	$forward = 'admin/users';
 }
 
 return elgg_redirect_response($forward);
