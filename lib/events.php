@@ -130,20 +130,15 @@ function user_hover_menu(\Elgg\Event $event) {
 
 function verify_register_user(\Elgg\Event $event) {
 	$p = $event->getParams();
-	$r = $event->getValue();
 
 	$email = $p['user']->email;
 	$ip = get_ip();
 	$result = check_spammer($email, $ip, true, false);
 	if ($result !== true) {
-		elgg_call(ELGG_IGNORE_ACCESS, function() use ($p) {
-			$p['user']->delete();
-		});
-		throw new \Elgg\Exceptions\Configuration\RegistrationException($result);
+		$msg = "Your registration did not pass our spam verification process.";
+		throw new \Elgg\Exceptions\Configuration\RegistrationException($msg);
 		return false;
 	}
-	
-	return $r;
 }
 
 function login_action_event(\Elgg\Event $event) {

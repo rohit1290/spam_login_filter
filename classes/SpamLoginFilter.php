@@ -10,7 +10,7 @@ class SpamLoginFilter extends DefaultPluginBootstrap {
     elgg_register_event_handler('cron', 'daily', 'daily_cron');
     elgg_register_event_handler('route', 'all', 'filter_router');
     elgg_register_event_handler('register', 'menu:user_hover', 'user_hover_menu', 1000);
-    elgg_register_event_handler('register', 'user', 'verify_register_user');
+    elgg_register_event_handler('register', 'user', 'verify_register_user', 0);
 
 
     // register events
