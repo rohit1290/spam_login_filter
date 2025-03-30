@@ -12,7 +12,7 @@ $created_date = htmlspecialchars(date(elgg_echo("friendlytime:date_format"), $sp
 $delete = elgg_view("output/url", [
 	"confirm" => elgg_echo("spam_login_filter:admin:confirm_delete_ip", [$spam_login_filter_ip->ip_address]),
 	"href" => "action/spam_login_filter/delete_ip/?spam_login_filter_ip_list[]=" . $spam_login_filter_ip->id,
-	"text" => elgg_view_icon("delete"),
+	"icon" => "delete",
 	"title" => elgg_echo("delete")
 ]);
 
