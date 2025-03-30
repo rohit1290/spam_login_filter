@@ -305,7 +305,7 @@ function notify_admin($blockedEmail, $blockedIp, $reason) {
 		}
 
 		$to = elgg_get_plugin_setting('notify_mail_address', 'spam_login_filter');
-		if (!is_email_address($to)) {
+		if (!elgg_is_valid_email($to)) {
 			return;
 		}
 		
