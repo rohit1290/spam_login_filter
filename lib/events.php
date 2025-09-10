@@ -61,7 +61,7 @@ function daily_cron() {
 		elgg_delete_annotations([
 			'guid' => elgg_get_site_entity()->guid,
 			'annotation_names' => 'spam_login_filter_ip',
-			'annotation_created_time_upper' => $week_ago,
+			'annotation_created_before' => $week_ago,
 			'limit' => false
 		]);
 
